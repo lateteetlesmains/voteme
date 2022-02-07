@@ -1,0 +1,11 @@
+body{
+    background-color: black;
+    color: white;
+}
+
+#pad_container{
+    display: flex;
+}
+.pads{
+    border: 1px solid white;
+}

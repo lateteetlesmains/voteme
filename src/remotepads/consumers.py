@@ -4,6 +4,17 @@ from tkinter import N
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+class Pad():
+    def __init__(self, id, message) -> None:
+        self.id = id
+        self.rank = None
+        self.message = message
+    def __repr__(self) -> str:
+        return self.id + " : " + str(self.rank)
+    def __eq__(self, __o: object) -> bool:
+        return self.id == __o.id
+
+pads = []
 
 class PadConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -29,8 +40,13 @@ class PadConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['id'] + ":" + text_data_json['message']
-
-        print(message)
+        incoming = Pad(text_data_json['id'],text_data_json['message'])
+        if not incoming in pads:
+            pads.append(incoming)
+            idx = pads.index(incoming)
+            pads[idx].rank = idx + 1
+        
+        print(pads)
         await self.channel_layer.group_send(
             self.romm_group_name,
             {
