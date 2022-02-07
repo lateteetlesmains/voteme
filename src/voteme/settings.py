@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bgd=ur_ql)du+anm@5cj)-!v8s4*a1gnhmvwp=j8@x89rfsi*p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.9', '127.0.0.1']
 
 
 # Application definition
@@ -71,7 +71,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'voteme.wsgi.application'
 ASGI_APPLICATION = 'voteme.asgi.application'
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
