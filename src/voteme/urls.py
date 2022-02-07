@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 urlpatterns = [
-    path('', include("bumpers.urls")),
-    path('bumpers/', include("bumpers.urls")),
+    path('', include("remotepads.urls")),
     path('admin/', admin.site.urls),
 ]
