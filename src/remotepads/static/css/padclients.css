@@ -6,6 +6,9 @@ body{
 #pad_container{
     display: flex;
 }
+.hidden{
+    display: none;
+}
 .pads{
     border: 1px solid white;
 }

@@ -1,7 +1,5 @@
 from email import message
 import json
-from tkinter import N
-from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class Pad():
@@ -17,10 +15,13 @@ class Pad():
 pads = []
 
 class PadConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        print(self.room_name)
-        self.romm_group_name = 'chat_%s' % self.room_name
+        # self.room_name = self.scope['url_route']['kwargs']['room_name']
+        #print(self.start)
+        # print(self.room_name)
+        # self.romm_group_name = 'chat_%s' % self.room_name
+        self.romm_group_name = 'pads'
         # Joint le groupe
         await self.channel_layer.group_add(
             self.romm_group_name,
@@ -39,9 +40,9 @@ class PadConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json['id'] + ":" + text_data_json['message']
         incoming = Pad(text_data_json['id'],text_data_json['message'])
-        if not incoming in pads:
+        print('message %s' % incoming.message)
+        if not incoming in pads and incoming.id != 'admin':
             pads.append(incoming)
             idx = pads.index(incoming)
             pads[idx].rank = idx + 1
@@ -51,11 +52,14 @@ class PadConsumer(AsyncWebsocketConsumer):
             self.romm_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': text_data_json['message'],
+                'id':text_data_json['id']
             }
         )
     async def chat_message(self, event):
         message = event['message']
+        id = event['id']
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'id':id
         }))

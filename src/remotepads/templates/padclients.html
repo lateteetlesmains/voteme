@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +9,7 @@
     <title>Pads Clients</title>
 </head>
 <body>
+    
     <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send"> -->
@@ -16,11 +17,10 @@
     <div id="pad_container">
 
     </div>
-    <div>
-        <a href="/">Retour</a>
-    </div>
+    <input class="" id="start_btn" type="button" value="Démarrer">
+    <!-- <input class="hidden" id="reset_btn" type="button" value="Réinitialiser"> -->
 
-    {{ room_name|json_script:"room-name" }}
+    {% comment %} {{ room_name|json_script:"room-name" }} {% endcomment %}
     <script src={% static 'js/jquery-3.6.0.js' %}></script>
     <script src={% static 'js/padclients.js' %}></script>
 </body>

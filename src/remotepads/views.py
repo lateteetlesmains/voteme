@@ -5,4 +5,4 @@ def index(request):
     return render(request, 'index.html', {})
 
 def pads(request):
-    return render(request, 'padclients.html',{'room_name': 'pads'})
+    return render(request, 'padclients.html')
