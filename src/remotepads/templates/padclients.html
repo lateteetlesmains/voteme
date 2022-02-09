@@ -20,9 +20,22 @@
     <div id="init_container">
         <label >Cliquez sur le bouton pour attendre l'arrivée des joueurs</label>
     </div>
-    
+
    
-    <input class="" id="start_btn" type="button" value="Démarrer">
+    <input class="all" id="start_btn" type="button" value="Démarrer">
+
+    <div class="form hidden">
+         
+         <form id="question_type_form">
+            <label for="qcm">QCM</label>
+            <input type="radio" name="question_type" id="qcm" value="QCM" checked>
+            <label for="quick">Rapidité</label>
+            <input type="radio" name="question_type" id="quick" value="QUICK">
+         </form>
+
+    </div>
+    <input class="game hidden" id="new_question_btn" type="button" value="Nouvelle question">
+   
 
     <script src={% static 'js/jquery-3.6.0.js' %}></script>
     <script src={% static 'js/padclients.js' %}></script>
