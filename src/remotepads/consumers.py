@@ -1,4 +1,3 @@
-from email import message
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -15,16 +14,18 @@ class Pad():
 pads = []
 
 class PadConsumer(AsyncWebsocketConsumer):
-
+    def __init__(self, *args, **kwargs):
+        self.started = False
+        super().__init__(*args, **kwargs)
     async def connect(self):
         # self.room_name = self.scope['url_route']['kwargs']['room_name']
         #print(self.start)
         # print(self.room_name)
-        # self.romm_group_name = 'chat_%s' % self.room_name
-        self.romm_group_name = 'pads'
+        # self.group_name = 'chat_%s' % self.room_name
+        self.group_name = 'pads'
         # Joint le groupe
         await self.channel_layer.group_add(
-            self.romm_group_name,
+            self.group_name,
             self.channel_name
         )
         
@@ -34,30 +35,35 @@ class PadConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
-            self.romm_group_name,
+            self.group_name,
             self.channel_name
         )
 
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         incoming = Pad(text_data_json['id'],text_data_json['message'])
-        print('message %s' % incoming.message)
-        if not incoming in pads and incoming.id != 'admin':
+        # print('message : %s' % incoming.message)
+        if incoming.id == 'admin':
+            if incoming.message == 'start':
+                self.started = True
+            else:
+                self.started = False
+        elif not incoming in pads :
             pads.append(incoming)
             idx = pads.index(incoming)
             pads[idx].rank = idx + 1
-        
-        print(pads)
+            print(pads)
         await self.channel_layer.group_send(
-            self.romm_group_name,
+            self.group_name,
             {
-                'type': 'chat_message',
+                'type': 'pad_message',
                 'message': text_data_json['message'],
                 'id':text_data_json['id']
             }
         )
-    async def chat_message(self, event):
+    async def pad_message(self, event):
         message = event['message']
+        print(message)
         id = event['id']
         await self.send(text_data=json.dumps({
             'message': message,

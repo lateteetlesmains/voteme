@@ -17,10 +17,13 @@
     <div id="pad_container">
 
     </div>
+    <div id="init_container">
+        <label >Cliquez sur le bouton pour attendre l'arrivée des joueurs</label>
+    </div>
+    
+   
     <input class="" id="start_btn" type="button" value="Démarrer">
-    <!-- <input class="hidden" id="reset_btn" type="button" value="Réinitialiser"> -->
 
-    {% comment %} {{ room_name|json_script:"room-name" }} {% endcomment %}
     <script src={% static 'js/jquery-3.6.0.js' %}></script>
     <script src={% static 'js/padclients.js' %}></script>
 </body>
