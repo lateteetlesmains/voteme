@@ -52,7 +52,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             pads.append(incoming)
             idx = pads.index(incoming)
             pads[idx].rank = idx + 1
-            print(pads)
+            # print(pads)
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -63,7 +63,7 @@ class PadConsumer(AsyncWebsocketConsumer):
         )
     async def pad_message(self, event):
         message = event['message']
-        print(message)
+        # print(message)
         id = event['id']
         await self.send(text_data=json.dumps({
             'message': message,

@@ -13,10 +13,10 @@ const webSocket = new WebSocket(
 );
 
 class Player {
-    constructor(id, answer, rank) {
+    constructor(id, rank) {
         this.id = id;
         this.number = -1;
-        this.answer = answer;
+        this.answer;
         this.has_answered = false;
         this.rank = rank;
     }
@@ -44,7 +44,7 @@ webSocket.onmessage = function (e) {
 
         if (waiting_players) {
             if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
-            var incomingPlayer = new Player(data.id, undefined, undefined);
+            var incomingPlayer = new Player(data.id, undefined);
             players.push(incomingPlayer);
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
 
@@ -52,6 +52,7 @@ webSocket.onmessage = function (e) {
             
                 <div class='pads'>
                     <div id="${incomingPlayer.number}">Joueur ${incomingPlayer.number}</div>
+                    <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "Pas de réponse" : incomingPlayer.answer}</div>
                     <div id="${incomingPlayer.number}_answer">${incomingPlayer.id}</div>
                     
                 </div>
@@ -154,7 +155,7 @@ $(() => {
     $('#new_question_btn').click(function (e) {
         log(currentGameMode);
         players.forEach(elt => {
-            $('#' + elt.number + '_answer').text('');
+            $('#' + elt.number + '_answer').text('Pas de réponse');
             elt.has_answered = false;
         });
         quick_players = []
