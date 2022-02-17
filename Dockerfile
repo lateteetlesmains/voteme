@@ -1,7 +1,9 @@
 FROM python:3.7-buster
 
-# USER root
-RUN apt-get update && apt-get install nginx -y --no-install-recommends
+#Pour windows
+#RUN apt-get update && apt-get install nginx -y --no-install-recommends
+#pour linux (RaspberryPi)
+RUN apt-get update && apt-get install nginx build-essential libssl-dev libffi-dev python3-dev cargo -y --no-install-recommends
 
 
 COPY nginx.default /etc/nginx/sites-available/default
