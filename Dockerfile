@@ -22,7 +22,7 @@ RUN python -m pip install uvicorn['standard']
 
 COPY src /opt/app/voteme/
 WORKDIR /opt/app/voteme
-EXPOSE 80
+EXPOSE 8080
 # COPY . ${APP_WORKDIR}
 
 # This is only needed if daphne is going to be running behind a proxy like nginx.
