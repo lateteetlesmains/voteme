@@ -44,6 +44,7 @@ webSocket.onmessage = function (e) {
 
         if (waiting_players) {
             if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
+            $('#waiting_players').addClass('hidden');
             var incomingPlayer = new Player(data.id, undefined);
             players.push(incomingPlayer);
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
@@ -56,10 +57,6 @@ webSocket.onmessage = function (e) {
                     <div id="${incomingPlayer.number}_answer">${incomingPlayer.id}</div>
                     
                 </div>
-                
-            
-            
-            
             `);
 
         }
@@ -121,6 +118,7 @@ $(() => {
             $(e.target).val('Lancer la partie');
             $('#init_container').addClass("hidden");
             $('.form').removeClass('hidden');
+            $('#waiting_players').removeClass('hidden');
             message.message = "start"
             waiting_players = true;
             gameStarted = false;
