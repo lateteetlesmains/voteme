@@ -3,7 +3,7 @@ upstream channels-backend {
 }
 
 server {
-	listen 8020 default_server;
+	listen 80 default_server;
 	server_name _;
     location / {
         try_files $uri @proxy_to_app;
