@@ -33,11 +33,18 @@ input[type=button] {
     font-size: xx-large;
 
 }
+
 .center{
     text-align: center;
 }
+.medium-text{
+    font-size: x-large;
+}
+.smaller-text{
+    font-size: large;
+}
 #waiting_players{
-    padding: 2rem;
+    padding-top: .6rem;
 }
 #init_container{
     margin-bottom: 2rem;
@@ -47,10 +54,13 @@ input[type=button] {
 #pad_container {
     display: flex;
     flex-wrap: wrap;
-    margin: .6rem;
+    /* margin: 1rem; */
 }
-#question_type_form{
+/* #question_type_form{
     padding: 2rem;;
+} */
+#new_question_btn{
+    margin-bottom: 1rem;
 }
 .hidden {
     display: none;
@@ -61,11 +71,11 @@ input[type=button] {
     background-color: var(--medium-dark);
     border-top: 1px solid var(--light-dark);
     border-left: 1px solid var(--light-dark);
-    border-radius: 2rem;
+    border-radius: .6rem;
     box-shadow: 5px 10px 8px var(--dark-black);
     padding: .6rem;
     font-size: x-large;
-    /* width: 100px; */
+    width: 125px;
 }
 .good_answer{
     background-color: green;

@@ -1,98 +1,102 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}" >  
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/bootstrap/bootstrap.min.css' %}"
+    />
 
-    <link rel="stylesheet" href="{% static 'css/padclients.css' %}">
+    <link rel="stylesheet" href="{% static 'css/padclients.css' %}" />
     <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
-    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>  
+    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/padclients.js' %}"></script>
     <title>Pads Clients</title>
-</head>
-<body>
-    
-    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send"> -->
+  </head>
+
+  <body>
     <div class="overall_container">
-        <div class="hidden" id="waiting_players">
-            <div class="loader"></div>
-            <div id="loader_text">Attente des joueurs ...</div>
-        </div>
-        <div id="pad_container" class="container">
+      <div class="hidden" id="waiting_players">
+        <div class="loader"></div>
+        <div id="loader_text">Attente des joueurs ...</div>
+      </div>
+      <div id="pad_container" class="container"></div>
+      <div id="init_container" class="row">
+        <label>Cliquez sur le bouton pour attendre l'arrivée des joueurs</label>
+      </div>
 
-        </div>
-        <div id="init_container" class="row">
-            <label >Cliquez sur le bouton pour attendre l'arrivée des joueurs</label>
-        </div>
+      <div class="form hidden center">
+        <form class="form" id="question_type_form">
+          <div class="form-group">
+            <label class="smaller-text">Type de question : </label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="medium-text btn btn-info active">
+                <input
+                  type="radio"
+                  name="options"
+                  id="qcm"
+                  autocomplete="off"
+                  checked
+                />
+                QCM
+              </label>
+              <label class="medium-text btn btn-info">
+                <input
+                  type="radio"
+                  name="options"
+                  id="quick"
+                  autocomplete="off"
+                />
+                Rapidité
+              </label>
+            </div>
+          </div>
+        </form>
+        <form class="form" id="answer_form">
+          <div class="form-group">
+            <label class="smaller-text">Réponse attendue : </label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="medium-text btn btn-info active">
+                <input type="radio" name="options" id="1" autocomplete="off" />
+                1
+              </label>
+              <label class="medium-text btn btn-info">
+                <input type="radio" name="options" id="2" autocomplete="off" />
+                2
+              </label>
+              <label class="medium-text btn btn-info">
+                <input type="radio" name="options" id="3" autocomplete="off" />
+                3
+              </label>
+              <label class="medium-text btn btn-info">
+                <input type="radio" name="options" id="4" autocomplete="off" />
+                4
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
 
+      <div class="container center">
+        <input
+          class="game hidden btn btn-primary"
+          id="new_question_btn"
+          type="button"
+          value="Nouvelle question"
+        />
+      </div>
 
-        <div class="center" id="start_btn_container">
-            <input class="btn btn-primary" id="start_btn" type="button" value="Démarrer">
-        </div>
-        
-
-        <div class="form hidden center">
-            
-            <form id="question_type_form">
-                <!-- <label for="qcm">QCM</label>
-                <input type="radio" name="question_type" id="qcm" value="QCM" checked>
-                <label for="quick">Rapidité</label>
-                <input type="radio" name="question_type" id="quick" value="QUICK"> -->
-                <div class="form-group">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-info active">
-                          <input type="radio" name="options" id="qcm" autocomplete="off" checked> QCM
-                        </label>
-                        <label class="btn btn-info">
-                          <input type="radio" name="options" id="quick" autocomplete="off"> Rapidité
-                        </label>
-                      
-                      </div>
-                </div>
-               
-              
-            </form>
-            <form class="" id="answer_form">
-                 <div class="form-group">
-                     <div>
-                        <label >Réponse attendue : </label>
-                     </div>
-                   
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-info active">
-                          <input type="radio" name="options" id="1" autocomplete="off"> 1
-                        </label>
-                        <label class="btn btn-info">
-                          <input type="radio" name="options" id="2" autocomplete="off"> 2
-                        </label>
-                        <label class="btn btn-info">
-                          <input type="radio" name="options" id="3" autocomplete="off"> 3
-                        </label>
-                        <label class="btn btn-info">
-                          <input type="radio" name="options" id="4" autocomplete="off"> 4
-                        </label>
-                      
-                      </div>
-                </div>
-            </form>
-
-        </div>
-        <div class="container center">
-           
-            <input class="game hidden btn btn-primary" id="new_question_btn" type="button" value="Nouvelle question">
-       
-        </div>
-        
-        
+      <div class="center" id="start_btn_container">
+        <input
+          class="btn btn-primary"
+          id="start_btn"
+          type="button"
+          value="Démarrer"
+        />
+      </div>
     </div>
-
-
-   
-    <script src={% static 'js/padclients.js' %}></script>
-
-</body>
+  </body>
 </html>

@@ -53,7 +53,7 @@ webSocket.onmessage = function (e) {
     if (data.id != "admin") {
 
         if (waiting_players) {
-            // if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
+            if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
             $('#waiting_players').addClass('hidden');
             var incomingPlayer = new Player(data.id, undefined);
             players.push(incomingPlayer);
@@ -63,9 +63,7 @@ webSocket.onmessage = function (e) {
             
                 <div class='pads' id="player_${incomingPlayer.number}">
                     <div class="center" id="${incomingPlayer.number}">Joueur ${incomingPlayer.number}</div>
-                    
-                   
-                    
+                                        
                 </div>
             `);
             // <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "" : incomingPlayer.answer}</div>
@@ -79,8 +77,8 @@ webSocket.onmessage = function (e) {
             if (!player.has_answered) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
-                    // player.answer = data.message; 
-                    player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
+                    player.answer = new ExpectedAnswer(data.message); 
+                    // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
 
                     $('#' + player.number + '_answer').text(player.answer);
 
@@ -91,13 +89,14 @@ webSocket.onmessage = function (e) {
 
                 }
                 else {
-                    log('quick')
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
-                    if (quick_players.length == players.length) {
+                    // if (quick_players.length == players.length) {
                         //tout le monde a joué
+                    if(!$('#player_' + quick_players[0].number).hasClass('good_answer'))
                         $('#player_' + quick_players[0].number).addClass('good_answer');
-                    }
+                    // }
+                    log(quick_players);
 
                 }
                 player.has_answered = true;
@@ -110,9 +109,7 @@ webSocket.onmessage = function (e) {
         }
 
     }
-    // log(players);
 
-    // document.querySelector('#chat-log').value += (data.message + '\n');
 };
 
 webSocket.onclose = function (e) {
@@ -122,20 +119,19 @@ webSocket.onclose = function (e) {
 
 
 $(() => {
-    $('#question_type_form').change(function (e) {
-        // currentGameMode = $("input[name='question_type']:checked").val() == 'QCM' ? GameModes.QCM : GameModes.Quick;
+    $('#question_type_form').on('change',function (e) {
         currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
         if (currentGameMode == GameModes.Quick)
             $('#answer_form').addClass('hidden');
         else
             $('#answer_form').removeClass('hidden');
     });
-    $('#answer_form').change(function (e) {
+    $('#answer_form').on('change',function (e) {
         expected_answer = new ExpectedAnswer(e.target.id);
         log(expected_answer);
     })
 
-    $('#start_btn').click(function (e) {
+    $('#start_btn').on('click',function (e) {
         message = { 'id': 'admin', 'message': "start" }
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs
@@ -178,10 +174,7 @@ $(() => {
     });
 
     $('#new_question_btn').click(function (e) {
-        log(currentGameMode);
         players.forEach(elt => {
-            $('#player_' + elt.number + '_answer').text('');
-            log($('#player_' + elt.number).hasClass('good_answer'))
             $('#player_' + elt.number).hasClass('good_answer') ?
                 $('#player_' + elt.number).removeClass('good_answer') :
                 $('#player_' + elt.number).removeClass('bad_answer');
