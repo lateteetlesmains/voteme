@@ -67,6 +67,12 @@ input[type=button] {
     font-size: x-large;
     /* width: 100px; */
 }
+.good_answer{
+    background-color: green;
+}
+.bad_answer{
+    background-color: red;
+}
 
 #loader_text{
     margin: 2rem;

@@ -4,7 +4,6 @@ const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
 
-
 const webSocket = new WebSocket(
     'ws://'
     + window.location.host
@@ -32,8 +31,19 @@ class GameModes {
     }
 }
 
-var currentGameMode = GameModes.QCM;
+class ExpectedAnswer {
+    static ONE = new ExpectedAnswer("1");
+    static TWO = new ExpectedAnswer("2");
+    static THREE = new ExpectedAnswer("3");
+    static FOUR = new ExpectedAnswer("4");
 
+    constructor(answer) {
+        this.answer = answer;
+    }
+}
+
+var currentGameMode = GameModes.QCM;
+var expected_answer = ExpectedAnswer.ONE
 var players = [];
 var quick_players = [];
 
@@ -51,18 +61,18 @@ webSocket.onmessage = function (e) {
 
             $('#pad_container').append(`
             
-                <div class='pads'>
+                <div class='pads' id="player_${incomingPlayer.number}">
                     <div class="center" id="${incomingPlayer.number}">Joueur ${incomingPlayer.number}</div>
-                    <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "" : incomingPlayer.answer}</div>
+                    
                    
                     
                 </div>
             `);
-
+            // <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "" : incomingPlayer.answer}</div>
         }
 
         else if (gameStarted) {
-           
+
             var player = players.find(elt => elt.id == data.id);
             if (player == undefined)
                 return; //Si le joueur n'est pas en lice on ignore
@@ -70,25 +80,30 @@ webSocket.onmessage = function (e) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
                     // player.answer = data.message; 
-                    player.answer = !player.has_answered ? data.message : player.answer;
+                    player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
 
                     $('#' + player.number + '_answer').text(player.answer);
+
+                    if (player.answer.answer == expected_answer.answer)
+                        $('#player_' + player.number).addClass('good_answer');
+                    else
+                        $('#player_' + player.number).addClass('bad_answer');
 
                 }
                 else {
                     log('quick')
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
-                    if(quick_players.length == players.length){
+                    if (quick_players.length == players.length) {
                         //tout le monde a joué
-                        $('#' + quick_players[0].number + "_answer").text('Gagné');
+                        $('#player_' + quick_players[0].number).addClass('good_answer');
                     }
 
                 }
                 player.has_answered = true;
             }
-           
-            
+
+
 
 
 
@@ -109,9 +124,16 @@ webSocket.onclose = function (e) {
 $(() => {
     $('#question_type_form').change(function (e) {
         // currentGameMode = $("input[name='question_type']:checked").val() == 'QCM' ? GameModes.QCM : GameModes.Quick;
-        currentGameMode = e.target.id =="qcm" ? GameModes.QCM : GameModes.Quick;
-        log(currentGameMode);
+        currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
+        if (currentGameMode == GameModes.Quick)
+            $('#answer_form').addClass('hidden');
+        else
+            $('#answer_form').removeClass('hidden');
     });
+    $('#answer_form').change(function (e) {
+        expected_answer = new ExpectedAnswer(e.target.id);
+        log(expected_answer);
+    })
 
     $('#start_btn').click(function (e) {
         message = { 'id': 'admin', 'message': "start" }
@@ -128,7 +150,7 @@ $(() => {
 
         else if ($(e.target).val() == 'Lancer la partie') {
             //lancement de partie
-            if(players.length < 1)
+            if (players.length < 1)
                 return;
             $(e.target).val("Réinitialiser");
             message.message = "game"
@@ -158,7 +180,11 @@ $(() => {
     $('#new_question_btn').click(function (e) {
         log(currentGameMode);
         players.forEach(elt => {
-            $('#' + elt.number + '_answer').text('');
+            $('#player_' + elt.number + '_answer').text('');
+            log($('#player_' + elt.number).hasClass('good_answer'))
+            $('#player_' + elt.number).hasClass('good_answer') ?
+                $('#player_' + elt.number).removeClass('good_answer') :
+                $('#player_' + elt.number).removeClass('bad_answer');
             elt.has_answered = false;
         });
         quick_players = []
