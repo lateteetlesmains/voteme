@@ -43,7 +43,7 @@ webSocket.onmessage = function (e) {
     if (data.id != "admin") {
 
         if (waiting_players) {
-            if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
+            // if (players.find(elt => elt.id == data.id)) return; //On s'assure que c'est pas le même joueur qui s'inscrit
             $('#waiting_players').addClass('hidden');
             var incomingPlayer = new Player(data.id, undefined);
             players.push(incomingPlayer);
@@ -52,9 +52,9 @@ webSocket.onmessage = function (e) {
             $('#pad_container').append(`
             
                 <div class='pads'>
-                    <div id="${incomingPlayer.number}">Joueur ${incomingPlayer.number}</div>
-                    <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "Pas de réponse" : incomingPlayer.answer}</div>
-                    <div id="${incomingPlayer.number}_answer">${incomingPlayer.id}</div>
+                    <div class="center" id="${incomingPlayer.number}">Joueur ${incomingPlayer.number}</div>
+                    <div id="${incomingPlayer.number}_answer">${incomingPlayer.answer == undefined ? "" : incomingPlayer.answer}</div>
+                   
                     
                 </div>
             `);
@@ -108,7 +108,9 @@ webSocket.onclose = function (e) {
 
 $(() => {
     $('#question_type_form').change(function (e) {
-        currentGameMode = $("input[name='question_type']:checked").val() == 'QCM' ? GameModes.QCM : GameModes.Quick;
+        // currentGameMode = $("input[name='question_type']:checked").val() == 'QCM' ? GameModes.QCM : GameModes.Quick;
+        currentGameMode = e.target.id =="qcm" ? GameModes.QCM : GameModes.Quick;
+        log(currentGameMode);
     });
 
     $('#start_btn').click(function (e) {
@@ -149,14 +151,14 @@ $(() => {
             $('.game').addClass("hidden");
 
         }
-        // log(message);
+        log(message);
         webSocket.send(JSON.stringify(message));
     });
 
     $('#new_question_btn').click(function (e) {
         log(currentGameMode);
         players.forEach(elt => {
-            $('#' + elt.number + '_answer').text('Pas de réponse');
+            $('#' + elt.number + '_answer').text('');
             elt.has_answered = false;
         });
         quick_players = []

@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >  
+
     <link rel="stylesheet" href="{% static 'css/padclients.css' %}">
+    <script src={% static 'js/jquery-3.6.0.js' %}></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>  
     <title>Pads Clients</title>
 </head>
 <body>
@@ -18,35 +22,52 @@
             <div class="loader"></div>
             <div id="loader_text">Attente des joueurs ...</div>
         </div>
-        <div id="pad_container">
+        <div id="pad_container" class="container">
 
         </div>
-        <div id="init_container">
+        <div id="init_container" class="row">
             <label >Cliquez sur le bouton pour attendre l'arrivée des joueurs</label>
         </div>
 
 
         <div class="center" id="start_btn_container">
-            <input id="start_btn" type="button" value="Démarrer">
+            <input class="btn btn-primary" id="start_btn" type="button" value="Démarrer">
         </div>
         
 
         <div class="form hidden center">
             
             <form id="question_type_form">
-                <label for="qcm">QCM</label>
+                <!-- <label for="qcm">QCM</label>
                 <input type="radio" name="question_type" id="qcm" value="QCM" checked>
                 <label for="quick">Rapidité</label>
-                <input type="radio" name="question_type" id="quick" value="QUICK">
+                <input type="radio" name="question_type" id="quick" value="QUICK"> -->
+                <div class="form-group">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-info active">
+                          <input type="radio" name="options" id="qcm" autocomplete="off" checked> QCM
+                        </label>
+                        <label class="btn btn-info">
+                          <input type="radio" name="options" id="quick" autocomplete="off"> Rapidité
+                        </label>
+                      
+                      </div>
+                </div>
             </form>
 
         </div>
-        <input class="game hidden" id="new_question_btn" type="button" value="Nouvelle question">
+        <div class="container center">
+           
+            <input class="game hidden btn btn-primary" id="new_question_btn" type="button" value="Nouvelle question">
+       
+        </div>
+        
         
     </div>
 
 
-    <script src={% static 'js/jquery-3.6.0.js' %}></script>
+   
     <script src={% static 'js/padclients.js' %}></script>
+
 </body>
 </html>
