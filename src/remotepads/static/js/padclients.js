@@ -126,6 +126,8 @@ $(() => {
 
         else if ($(e.target).val() == 'Lancer la partie') {
             //lancement de partie
+            if(players.length < 1)
+                return;
             $(e.target).val("Réinitialiser");
             message.message = "game"
             waiting_players = false;
@@ -137,6 +139,7 @@ $(() => {
             //reset
             $('#init_container').removeClass("hidden");
             $('.form').addClass('hidden');
+            $('#waiting_players').addClass('hidden');
             $(e.target).val("Démarrer");
             message.message = "reset"
             waiting_players = false;
