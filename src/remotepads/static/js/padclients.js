@@ -3,6 +3,13 @@
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
+var soundPaths = [
+    { soundName: "Phone", path: "/static/audio/phonecall.wav" },
+    { soundName: "Up", path: "/static/audio/smb_1-up.wav" },
+    { soundName: "Coin", path: "/static/audio/smb_coin.wav" },
+    { soundName: "Jump", path: "/static/audio/smb_jump-super.wav" },
+    { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
+]
 
 const webSocket = new WebSocket(
     'ws://'
@@ -46,6 +53,7 @@ var currentGameMode = GameModes.QCM;
 var expected_answer = ExpectedAnswer.ONE
 var players = [];
 var quick_players = [];
+var soundList = []
 
 webSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
@@ -63,7 +71,7 @@ webSocket.onmessage = function (e) {
 
             $('#players_container').append(`
             
-            <div class='box-Buzzer' id='box_Buzzer${incomingPlayer.number}'>
+            <div class='box-Buzzer' id='box_Buzzer_${incomingPlayer.number}'>
                
                     <div class="player_name_score_container">
                         <div class='player_name'>
@@ -85,6 +93,7 @@ webSocket.onmessage = function (e) {
                     <audio src="/static/audio/smb_jump-super.wav" type="audio/mpeg">
                             Your browser does not support the audio element.
                     </audio>
+                 
                 </div>
                 
             </div>
@@ -98,6 +107,7 @@ webSocket.onmessage = function (e) {
             var player = players.find(elt => elt.id == data.id);
             if (player == undefined)
                 return; //Si le joueur n'est pas en lice on ignore
+
             if (!player.has_answered) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
@@ -105,11 +115,11 @@ webSocket.onmessage = function (e) {
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
 
                     $('#' + player.number + '_answer').text(player.answer);
-
+                    log(player)
                     if (player.answer.answer == expected_answer.answer)
-                        $('#player_' + player.number).addClass('good_answer');
+                        $('#box_Buzzer_' + player.number).addClass('good_answer');
                     else
-                        $('#player_' + player.number).addClass('bad_answer');
+                        $('#box_Buzzer_' + player.number).addClass('bad_answer');
 
                 }
                 else {
@@ -117,10 +127,10 @@ webSocket.onmessage = function (e) {
                     player.rank = quick_players.indexOf(player);
                     // if (quick_players.length == players.length) {
                     //tout le monde a joué
-                    if (!$('#player_' + quick_players[0].number).hasClass('good_answer'))
-                        $('#player_' + quick_players[0].number).addClass('good_answer');
+                    if (!$('#box_Buzzer_' + quick_players[0].number).hasClass('good_answer'))
+                        $('#box_Buzzer_' + quick_players[0].number).addClass('good_answer');
                     // }
-                    log(quick_players);
+           
 
                 }
                 player.has_answered = true;
@@ -143,12 +153,13 @@ webSocket.onclose = function (e) {
 
 
 $(() => {
+
     $('#question_type_form').on('change', function (e) {
         currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
         if (currentGameMode == GameModes.Quick)
-            $('#answer_form').addClass('hidden');
+            $('#answer_form').addClass('hide');
         else
-            $('#answer_form').removeClass('hidden');
+            $('#answer_form').removeClass('hide');
     });
     $('#answer_form').on('change', function (e) {
         expected_answer = new ExpectedAnswer(e.target.id);
@@ -163,6 +174,7 @@ $(() => {
             $(e.target).val('Lancer la partie');
             $('#start_text').addClass("hidden");
             $('#waiting_players').removeClass('hidden');
+            $('.form').removeClass('hidden');
             message.message = "start"
             waiting_players = true;
             gameStarted = false;
@@ -176,21 +188,22 @@ $(() => {
             message.message = "game"
             waiting_players = false;
             gameStarted = true;
-            // $('.game').removeClass("hidden");
+            $('.ingame').removeClass("hidden");
 
         }
         else {
             //reset
             $('#start_text').removeClass("hidden");
-            // $('.form').addClass('hidden');
+            $('.form').addClass('hidden');
             $('#waiting_players').addClass('hidden');
             $(e.target).val("Démarrer");
+            $('#players_container').text('');
+            $('.ingame').addClass("hidden");
             message.message = "reset"
             waiting_players = false;
             gameStarted = false;
             players = [];
-            $('#players_container').text('');
-            $('.game').addClass("hidden");
+
 
         }
         log(message);
@@ -199,9 +212,9 @@ $(() => {
 
     $('#new_question_btn').click(function (e) {
         players.forEach(elt => {
-            $('#player_' + elt.number).hasClass('good_answer') ?
-                $('#player_' + elt.number).removeClass('good_answer') :
-                $('#player_' + elt.number).removeClass('bad_answer');
+            $('#box_Buzzer_' + elt.number).hasClass('good_answer') ?
+                $('#box_Buzzer_' + elt.number).removeClass('good_answer') :
+                $('#box_Buzzer_' + elt.number).removeClass('bad_answer');
             elt.has_answered = false;
         });
         quick_players = []

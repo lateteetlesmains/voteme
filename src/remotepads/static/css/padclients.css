@@ -75,13 +75,26 @@ body {
 .hidden {
     display: none;
 }
+.hide{
+    visibility: hidden;
+}
 
 .center_text {
     text-align: center;
 }
 
-
+.form {
+    margin-left: .6rem;
+    margin-right: .6rem;
+}
+.start_reset{
+    margin-left: .6rem;
+    margin-right: .6rem;
+}
 #btn_start_container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
     margin-top: 1rem;
 }
 
@@ -127,10 +140,11 @@ body {
 }
 
 /* Buzzers */
-audio{
+audio {
     width: 150px;
     height: 20px;
 }
+
 .box-Buzzer {
 
     display: flex;
@@ -161,4 +175,11 @@ audio{
     font-size: 16px;
     letter-spacing: 1px;
     color: #FFF;
+}
+.good_answer{
+    background-color: green;
+}
+
+.bad_answer{
+    background-color: red;
 }

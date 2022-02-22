@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="{% static 'css/padclients.css' %}" />
     <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
-    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/padclients.js' %}"></script>
     <title>Pads Clients</title>
   </head>
@@ -24,14 +24,77 @@
       </div>
     </header>
     <main>
+
         <div id="start_text" class="center_text">Cliquez ici pour attendre les joueurs.</div>
         <div class="hidden center_text" id="waiting_players">
           <div class="loader"></div>
           <div id="loader_text">Attente des joueurs ...</div>
         </div>
+
+
+
         <div id="btn_start_container" class="center_text ">
-            <input type="button" id="start_btn" class="btn btn-primary" value="Démarrer"></input>
+            <form class="form hidden" id="question_type_form">
+              <div class="form-group">
+                <div>
+                  <label class="smaller-text">Type de question : </label>
+                </div>
+                
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label class="medium-text btn btn-info active">
+                    <input
+                      type="radio"
+                      name="options"
+                      id="qcm"
+                      autocomplete="off"
+                      checked
+                    />
+                    QCM
+                  </label>
+                  <label class="medium-text btn btn-info">
+                    <input
+                      type="radio"
+                      name="options"
+                      id="quick"
+                      autocomplete="off"
+                    />
+                    Rapidité
+                  </label>
+                </div>
+              </div>
+            </form>
+
+            <input type="button" id="start_btn" class="btn btn-primary start_reset" value="Démarrer"></input>
+            <input type="button" id="new_question_btn" class="btn btn-primary hidden ingame start_reset" value="Nouvelle question"></input>
+
+            <form class="form hidden" id="answer_form">
+              <div class="form-group">
+                <div>
+                    <label class="smaller-text">Réponse attendue : </label>
+                </div>
+                
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label class="medium-text btn btn-info active">
+                    <input type="radio" name="options" id="1" autocomplete="off" />
+                    1
+                  </label>
+                  <label class="medium-text btn btn-info">
+                    <input type="radio" name="options" id="2" autocomplete="off" />
+                    2
+                  </label>
+                  <label class="medium-text btn btn-info">
+                    <input type="radio" name="options" id="3" autocomplete="off" />
+                    3
+                  </label>
+                  <label class="medium-text btn btn-info">
+                    <input type="radio" name="options" id="4" autocomplete="off" />
+                    4
+                  </label>
+                </div>
+              </div>
+            </form>
         </div>
+        
 
 
       <div id="players_container" class="hidden">
