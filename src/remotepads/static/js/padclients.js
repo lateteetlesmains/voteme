@@ -25,6 +25,11 @@ class Player {
         this.answer;
         this.has_answered = false;
         this.rank = rank;
+        this.score = 0;
+    }
+    update(){
+        $(`#player_${this.number}_score`).text(this.score +
+            (this.score > 1 ? " Points" : " Point"));
     }
 }
 
@@ -49,6 +54,7 @@ class ExpectedAnswer {
     }
 }
 
+
 var currentGameMode = GameModes.QCM;
 var expected_answer = ExpectedAnswer.ONE
 var players = [];
@@ -67,7 +73,10 @@ webSocket.onmessage = function (e) {
             var incomingPlayer = new Player(data.id, undefined);
 
             players.push(incomingPlayer);
+
+
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
+
 
             $('#players_container').append(`
             
@@ -79,13 +88,13 @@ webSocket.onmessage = function (e) {
                         </div>
                         <div class='score_container'>
                             <div>
-                                <label class='score' >SCORE </label>
-                                <label class='score' >: 0 Points</label>  
+                                <label class='score' >SCORE : </label>
+                                <label id='player_${incomingPlayer.number}_score' class='score' >${incomingPlayer.score} Point</label>  
                             </div>
                                            
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_+' value='-1'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}minus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>
+                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_minus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_+' value='-1'>
+                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro'>
+                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>
                         </div>
                     </div>
                                       
@@ -114,23 +123,34 @@ webSocket.onmessage = function (e) {
                     player.answer = new ExpectedAnswer(data.message);
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
 
-                    $('#' + player.number + '_answer').text(player.answer);
+                    $(`#${player.number}_answer`).text(player.answer);
                     log(player)
-                    if (player.answer.answer == expected_answer.answer)
-                        $('#box_Buzzer_' + player.number).addClass('good_answer');
-                    else
-                        $('#box_Buzzer_' + player.number).addClass('bad_answer');
+                    if (player.answer.answer == expected_answer.answer) {
+                        $(`#box_Buzzer_${player.number}`).addClass('good_answer');
+                        player.score += 1;
+                        player.update();
+                        // $('#player_' + player.number + '_score').text(player.score +
+                        //     (player.score > 1 ? " Points" : " Point"));
+                    }
+
+                    else {
+                        $(`#box_Buzzer_${player.number}`).addClass('bad_answer');
+                    }
+
 
                 }
                 else {
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
-                    // if (quick_players.length == players.length) {
-                    //tout le monde a joué
-                    if (!$('#box_Buzzer_' + quick_players[0].number).hasClass('good_answer'))
-                        $('#box_Buzzer_' + quick_players[0].number).addClass('good_answer');
-                    // }
-           
+                    player.score += 1;
+
+                    if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
+                        $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
+                    player.update();
+                    // $('#player_' + player.number + '_score').text(player.score +
+                    //     player.score > 1 ? " Points" : " Point");
+
+
 
                 }
                 player.has_answered = true;
@@ -184,6 +204,21 @@ $(() => {
             //lancement de partie
             if (players.length < 1)
                 return;
+            players.forEach(player => {
+                $(`#btn_buzzer_${player.number}_plus`).on('click', function (e) {
+                    player.score += 1;
+                    player.update();
+
+                });
+                $(`#btn_buzzer_${player.number}_minus`).on('click', function (e) {
+                    player.score -= 1;
+                    player.update();
+                });
+                $(`#btn_buzzer_${player.number}_reset`).on('click', function (e) {
+                    player.score = 0;
+                    player.update();
+                });
+            });
             $(e.target).val("Réinitialiser");
             message.message = "game"
             waiting_players = false;
@@ -212,11 +247,13 @@ $(() => {
 
     $('#new_question_btn').click(function (e) {
         players.forEach(elt => {
-            $('#box_Buzzer_' + elt.number).hasClass('good_answer') ?
-                $('#box_Buzzer_' + elt.number).removeClass('good_answer') :
-                $('#box_Buzzer_' + elt.number).removeClass('bad_answer');
+            $(`#box_Buzzer_${elt.number}`).hasClass('good_answer') ?
+                $(`#box_Buzzer_${elt.number}`).removeClass('good_answer') :
+                $(`#box_Buzzer_${elt.number}`).removeClass('bad_answer');
             elt.has_answered = false;
         });
         quick_players = []
     });
+
+
 })
