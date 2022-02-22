@@ -5,12 +5,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{% static 'css/bootstrap/bootstrap.min.css' %}"
-    />
-
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/padclients.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/padclients_mobile.css' %}" />
     <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
     <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/padclients.js' %}"></script>
@@ -18,7 +16,7 @@
   </head>
 
   <body>
-    <header>
+    <header class="container-fluid">
       <div>
         <h2>Buzzi WIFI Multigame</h2>
       </div>
@@ -26,14 +24,14 @@
     <main>
 
         <div id="start_text" class="center_text">Cliquez ici pour attendre les joueurs.</div>
-        <div class="hidden center_text" id="waiting_players">
+        <div class="hidden center_text container" id="waiting_players">
           <div class="loader"></div>
           <div id="loader_text">Attente des joueurs ...</div>
         </div>
 
 
 
-        <div id="btn_start_container" class="center_text ">
+        <div id="btn_start_container" class="center_text container">
             <form class="form hidden" id="question_type_form">
               <div class="form-group">
                 <div>
@@ -97,7 +95,7 @@
         
 
 
-      <div id="players_container" class="hidden">
+      <div id="players_container" class="hidden container">
 
       </div>
     </main>
