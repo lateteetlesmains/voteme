@@ -1,11 +1,39 @@
 :root {
-    --dark-black: #121212;
-    --medium-dark: #282828;
-    --light-dark: #393939;
-    --pale-blue: #6F79B7;
-    --medium-grey: #444;
-    --middle-blue: #087fee;
 
+    --main-color: #e61b73;
+    --main-color-dark: #ce0073;
+    --main-color-darker: #891f71;
+    --main-color-darkest: #44245f;
+    --main-font-color: #aaa;
+    --main-font-color-darker: #222;
+    --main-font-color-lighter: #ccc;
+    --main-font: 'Open sans', Helvetica, Arial, sans-serif;
+    /* Open sans (google font en ligne), sinon Trebuchet, Arial, ou sans-serif*/
+    --main-font-size: 1.2rem;
+    --main-font-line-height: 1.4rem;
+    --main-font-weight: 400;
+    /** Header **/
+    --header-bg-color: #fff;
+    --header-height: 6rem;
+    /* 6rem=60px */
+    /** Logo **/
+    --logo-height: 4rem;
+    /* 4rem=40px */
+    --logo-color: url(#grad);
+    /* var(--main-color) || url(#gradient)=> Dégradé avec couleurs principales */
+    --logo-color-black: #222;
+    /** Contenu principale **/
+    --content-min-width: 29rem;
+    /* 290px*/
+    --content-bg-color: #fafafa;
+    /** Controle & Pilotage **/
+    --gauge-thickness: 0.2;
+    --gauge-fg-color: var(--main-color);
+    --gauge-bg-color: #ddd;
+    /** Barre de Scroll **/
+    --scroll-color: #fff;
+    --scroll-color-thumb: #222;
+    --scroll-color-track: #ddd;
 }
 
 /* reset */
@@ -15,90 +43,79 @@
 
 }
 
-body {
-    background-color: var(--medium-dark);
-    color: var(--pale-blue);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size:xx-large;
+
+header {
+    margin: 0;
+    width: 100vw;
+    min-width: var(--content-min-width);
+    /* position: fixed; */
+    z-index: 99;
+    top: 0;
+    background-color: var(--header-bg-color);
+    /* min-height: var(--header-height); */
+    box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.11), 0 0px 6px 0 rgba(0, 0, 0, 0.16);
 }
 
-input[type=button] {
-    /* border-radius: .2rem;
-    border: solid 1px var(--pale-blue);
-    padding: .4rem;
-    background-color: var(--middle-blue);
-    color:white; */
-    font-size: xx-large;
-
-}
-
-.center{
+header div {
+    color: purple;
+    padding: 1rem;
     text-align: center;
+
 }
-.medium-text{
-    font-size: x-large;
+
+body {
+
+    color: white;
+    height: 100vh;
+    background: linear-gradient(to right, var(--main-color-darker), var(--main-color));
+    background-repeat: no-repeat;
+
 }
-.smaller-text{
-    font-size: large;
-}
-#waiting_players{
-    padding-top: .6rem;
-}
-#init_container{
-    margin-bottom: 2rem;
-    margin-top: 2rem;
-    margin-left: 1rem;
-}
-#pad_container {
-    display: flex;
-    flex-wrap: wrap;
-    /* margin: 1rem; */
-}
-/* #question_type_form{
-    padding: 2rem;;
-} */
-#new_question_btn{
-    margin-bottom: 1rem;
-}
+
 .hidden {
     display: none;
 }
 
-.pads {
-    margin: 4px ;
-    background-color: var(--medium-dark);
-    border-top: 1px solid var(--light-dark);
-    border-left: 1px solid var(--light-dark);
-    border-radius: .6rem;
-    box-shadow: 5px 10px 8px var(--dark-black);
-    padding: .6rem;
-    font-size: x-large;
-    width: 125px;
-}
-.good_answer{
-    background-color: green;
-}
-.bad_answer{
-    background-color: red;
+.center_text {
+    text-align: center;
 }
 
-#loader_text{
+
+#btn_start_container {
+    margin-top: 1rem;
+}
+
+#start_container #start_text {
+    margin-bottom: 1rem;
+}
+
+#players_container {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+
+/* Animation */
+#loader_text {
     margin: 2rem;
 }
 
-/* Animation */
+#waiting_players {
+    margin-top: 1rem;
+}
+
 .loader {
-    border: solid .6rem var(--pale-blue);
+    border: solid .4rem var(--main-color-darker);
     border-radius: 50%;
-    border-top: solid .6rem var(--middle-blue);
-    border-bottom: solid .6rem var(--middle-blue);
+    border-top: solid .4rem var(--content-bg-color);
+    border-bottom: solid .4rem var(--content-bg-color);
     margin: auto;
     width: 4rem;
     height: 4rem;
     animation: spin 2s linear infinite;
 }
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -107,4 +124,41 @@ input[type=button] {
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* Buzzers */
+audio{
+    width: 150px;
+    height: 20px;
+}
+.box-Buzzer {
+
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, .8);
+    border-radius: 10px;
+    width: 60vw;
+    padding: 1rem;
+    margin-top: .6rem;
+}
+
+.box-Buzzer h2 {
+    color: #f2184f;
+}
+
+
+.box-Buzzer input[type='submit'] {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #0098d8;
+    /* padding: 10px 20px; */
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.score {
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #FFF;
 }
