@@ -149,11 +149,14 @@ webSocket.onmessage = function (e) {
                 else {
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
-                    player.score += 1;
+                    log(quick_players);
 
                     if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
-                    player.update();
+                    quick_players[0].score += 1;
+                    quick_players[0].update();
+                    let msg = { "id": "admin", "player_id": quick_players[0].id, "message": "faster" };
+                    webSocket.send(JSON.stringify(msg));
                     // $('#player_' + player.number + '_score').text(player.score +
                     //     player.score > 1 ? " Points" : " Point");
 
@@ -248,6 +251,7 @@ $(() => {
             waiting_players = false;
             gameStarted = false;
             players = [];
+            quick_players = [];
 
 
         }
