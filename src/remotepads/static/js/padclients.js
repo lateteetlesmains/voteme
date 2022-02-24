@@ -27,7 +27,7 @@ class Player {
         this.rank = rank;
         this.score = 0;
     }
-    update(){
+    update() {
         $(`#player_${this.number}_score`).text(this.score +
             (this.score > 1 ? " Points" : " Point"));
     }
@@ -44,10 +44,10 @@ class GameModes {
 }
 
 class ExpectedAnswer {
-    static ONE = new ExpectedAnswer("1");
-    static TWO = new ExpectedAnswer("2");
-    static THREE = new ExpectedAnswer("3");
-    static FOUR = new ExpectedAnswer("4");
+    static A = new ExpectedAnswer("a");
+    static B = new ExpectedAnswer("b");
+    static C = new ExpectedAnswer("c");
+    static D = new ExpectedAnswer("d");
 
     constructor(answer) {
         this.answer = answer;
@@ -56,14 +56,14 @@ class ExpectedAnswer {
 
 
 var currentGameMode = GameModes.QCM;
-var expected_answer = ExpectedAnswer.ONE
+var expected_answer = ExpectedAnswer.A
 var players = [];
 var quick_players = [];
 var soundList = []
 
 webSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
-    // log(data)
+    log(data)
     if (data.id != "admin") {
 
         if (waiting_players) {
@@ -122,20 +122,25 @@ webSocket.onmessage = function (e) {
                 if (currentGameMode == GameModes.QCM) {
                     player.answer = new ExpectedAnswer(data.message);
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
-
+                    log(expected_answer)
                     $(`#${player.number}_answer`).text(player.answer);
-                    log(player)
+                    let msg = { "id": "admin","player_id": player.id, "message":""};
+                    
                     if (player.answer.answer == expected_answer.answer) {
                         $(`#box_Buzzer_${player.number}`).addClass('good_answer');
                         player.score += 1;
                         player.update();
+                        msg.message = "good";
                         // $('#player_' + player.number + '_score').text(player.score +
                         //     (player.score > 1 ? " Points" : " Point"));
                     }
 
                     else {
                         $(`#box_Buzzer_${player.number}`).addClass('bad_answer');
+                        msg.message = "bad";
                     }
+                    log(msg)
+                    webSocket.send(JSON.stringify(msg));
 
 
                 }
@@ -183,11 +188,10 @@ $(() => {
     });
     $('#answer_form').on('change', function (e) {
         expected_answer = new ExpectedAnswer(e.target.id);
-        log(expected_answer);
     })
 
     $('#start_btn').on('click', function (e) {
-        message = { 'id': 'admin', 'message': "start" };
+        message = { 'id': 'admin','player_id':"", 'message': "start" };
         log($(e.target).val());
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs

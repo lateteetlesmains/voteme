@@ -40,14 +40,16 @@ class PadConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data=None):
+        print(text_data)
         text_data_json = json.loads(text_data)
         incoming = Pad(text_data_json['id'],text_data_json['message'])
-        # print('message : %s' % incoming.message)
+        print('message : %s' % incoming.message)
         if incoming.id == 'admin':
             if incoming.message == 'start':
                 self.started = True
             else:
                 self.started = False
+
         elif not incoming in pads :
             pads.append(incoming)
             idx = pads.index(incoming)
@@ -58,14 +60,16 @@ class PadConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'pad_message',
                 'message': text_data_json['message'],
-                'id':text_data_json['id']
+                'id':text_data_json['id'],
+                'player_id':text_data_json['player_id']
             }
         )
     async def pad_message(self, event):
         message = event['message']
-        # print(message)
+        player_id = event['player_id']
         id = event['id']
         await self.send(text_data=json.dumps({
             'message': message,
-            'id':id
+            'id':id,
+            'player_id':player_id
         }))
