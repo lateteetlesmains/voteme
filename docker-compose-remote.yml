@@ -1,7 +1,7 @@
 version: "2"
 services:
   web:
-    image: adl1422/voteme:testing
+    image: adl1422/voteme:latest
     container_name: web_app
     restart: always
     ports:
