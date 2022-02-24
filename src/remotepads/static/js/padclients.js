@@ -108,6 +108,8 @@ webSocket.onmessage = function (e) {
             </div>
 
             `);
+            let msg = { "id": "admin", "player_id": incomingPlayer.id, "message": "OK" };
+            webSocket.send(JSON.stringify(msg));
 
         }
 
@@ -124,8 +126,8 @@ webSocket.onmessage = function (e) {
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
                     log(expected_answer)
                     $(`#${player.number}_answer`).text(player.answer);
-                    let msg = { "id": "admin","player_id": player.id, "message":""};
-                    
+                    let msg = { "id": "admin", "player_id": player.id, "message": "" };
+
                     if (player.answer.answer == expected_answer.answer) {
                         $(`#box_Buzzer_${player.number}`).addClass('good_answer');
                         player.score += 1;
@@ -171,6 +173,10 @@ webSocket.onmessage = function (e) {
 
 };
 
+webSocket.onopen = function (e) {
+    let msg = { 'id': 'admin', 'player_id': '', 'message': "reset" };
+    webSocket.send(JSON.stringify(msg));
+}
 webSocket.onclose = function (e) {
     console.error('Chat socket closed unexpectedly');
 };
@@ -191,7 +197,7 @@ $(() => {
     })
 
     $('#start_btn').on('click', function (e) {
-        message = { 'id': 'admin','player_id':"", 'message': "start" };
+        message = { 'id': 'admin', 'player_id': "", 'message': "start" };
         log($(e.target).val());
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs
@@ -257,6 +263,8 @@ $(() => {
             elt.has_answered = false;
         });
         quick_players = []
+        let msg = { "id": "admin", "player_id": "", "message": "game" };
+        webSocket.send(JSON.stringify(msg));
     });
 
 
