@@ -27,6 +27,7 @@ class MyThread(Thread):
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads):
                     self.currentPlayer = 0
+            print(len(pads))
 
 stopFlag = Event()
 thread = MyThread(stopFlag)
