@@ -3,7 +3,7 @@ from itertools import starmap
 import json
 if not debug:
     from . import leds
-from threading import Timer, Thread, Event
+from threading import Thread, Event
 from channels.generic.websocket import AsyncWebsocketConsumer
 pads = []
 if not debug:
@@ -18,13 +18,13 @@ class MyThread(Thread):
     def run(self):
         while not self.stopped.wait(5.0):
             if(len(pads)> 0):
-                if not debug:
-                    d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
-                    d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
+                # if not debug:
+                #     d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
+                #     d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads):
                     self.currentPlayer = 0
-                print(pads)
+                print('hello')
 
 stopFlag = Event()
 thread = MyThread(stopFlag)
