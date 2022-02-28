@@ -1,13 +1,14 @@
-debug = False
-from itertools import starmap
+from channels.generic.websocket import AsyncWebsocketConsumer
+from threading import Thread, Event
 import json
+from itertools import starmap
+debug = True
 if not debug:
     from . import leds
-from threading import Thread, Event
-from channels.generic.websocket import AsyncWebsocketConsumer
 pads = []
 if not debug:
     d = leds.Display(leds.board.D18, 35)
+
 
 class MyThread(Thread):
     def __init__(self, event):
@@ -17,23 +18,19 @@ class MyThread(Thread):
 
     def run(self):
         while not self.stopped.wait(5.0):
-            if(len(pads)> 0):
+            if(len(pads) > 0):
                 # if not debug:
                 #     d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
                 #     d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads):
                     self.currentPlayer = 0
-                print('hello')
+                # print('hello')
+
 
 stopFlag = Event()
 thread = MyThread(stopFlag)
 thread.start()
-
-
-
-    
-
 
 
 class Pad():
@@ -43,12 +40,12 @@ class Pad():
         self.message = message
         self.playerid = ""
         self.score = 0
+
     def __repr__(self) -> str:
         return self.name + '(' + self.id + ') ' + str(self.score)
+
     def __eq__(self, __o: object) -> bool:
         return self.id == __o.id
-
-
 
 
 class PadConsumer(AsyncWebsocketConsumer):
@@ -56,22 +53,15 @@ class PadConsumer(AsyncWebsocketConsumer):
         self.started = False
         self.ingame = False
         super().__init__(*args, **kwargs)
+
     async def connect(self):
-        # self.room_name = self.scope['url_route']['kwargs']['room_name']
-        #print(self.start)
-        # print(self.room_name)
-        # self.group_name = 'chat_%s' % self.room_name
         self.group_name = 'pads'
-        # d.draw(5, 'p1', leds.Color.Blue)
-        # Joint le groupe
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
-        
-        await self.accept()
 
-       
+        await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
@@ -82,8 +72,8 @@ class PadConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         global pads
         text_data_json = json.loads(text_data)
-        print(text_data_json)
-        incoming = Pad(text_data_json['id'],text_data_json['message'])
+        # print(text_data_json)
+        incoming = Pad(text_data_json['id'], text_data_json['message'])
         incoming.score = text_data_json['score']
         incoming.playerid = text_data_json['player_id']
 
@@ -98,32 +88,30 @@ class PadConsumer(AsyncWebsocketConsumer):
                 self.ingame = False
                 pads = []
 
-        elif not incoming in pads :
+        elif not incoming in pads:
             pads.append(incoming)
             idx = pads.index(incoming)
             pads[idx].name = 'p' + str((idx + 1))
-        
+
         if self.ingame:
-            for pad in pads:
-                # print(pad.id==incoming.playerid)
-            
-                if pad.id == incoming.playerid:
-                    pad.score = incoming.score
-                    break
-
-
-        
+            if incoming.message == 'good' or incoming.message == 'faster':
+                for pad in pads:
+                    if pad.id == incoming.playerid:
+                        pad.score = incoming.score
+                        break
+                print(pads)
 
         await self.channel_layer.group_send(
             self.group_name,
             {
                 'type': 'pad_message',
                 'message': text_data_json['message'],
-                'id':text_data_json['id'],
-                'player_id':text_data_json['player_id'],
-                'score':text_data_json['score']
+                'id': text_data_json['id'],
+                'player_id': text_data_json['player_id'],
+                'score': text_data_json['score']
             }
         )
+
     async def pad_message(self, event):
         message = event['message']
         player_id = event['player_id']
@@ -131,7 +119,7 @@ class PadConsumer(AsyncWebsocketConsumer):
         id = event['id']
         await self.send(text_data=json.dumps({
             'message': message,
-            'id':id,
-            'player_id':player_id,
+            'id': id,
+            'player_id': player_id,
             'score': score
         }))
