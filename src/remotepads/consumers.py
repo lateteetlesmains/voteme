@@ -1,17 +1,13 @@
+debug = False
 from itertools import starmap
 import json
-from . import leds
+if not debug:
+    from . import leds
 from threading import Timer, Thread, Event
 from channels.generic.websocket import AsyncWebsocketConsumer
 pads = []
-d = leds.Display(leds.board.D18, 35)
-
-def updateLeds():
-    global currentPlayer
-    # d.draw(1,pads[currentPlayer].name,leds.Color.Blue)
-    # d.draw(5,pads[currentPlayer].score,leds.Color.Green)
-
-
+if not debug:
+    d = leds.Display(leds.board.D18, 35)
 
 class MyThread(Thread):
     def __init__(self, event):
@@ -22,12 +18,13 @@ class MyThread(Thread):
     def run(self):
         while not self.stopped.wait(5.0):
             if(len(pads)> 0):
-                d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
-                d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
+                if not debug:
+                    d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
+                    d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads):
                     self.currentPlayer = 0
-            print(len(pads))
+                print(pads)
 
 stopFlag = Event()
 thread = MyThread(stopFlag)
@@ -83,7 +80,7 @@ class PadConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data=None):
-        
+        global pads
         text_data_json = json.loads(text_data)
         print(text_data_json)
         incoming = Pad(text_data_json['id'],text_data_json['message'])
@@ -99,6 +96,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             elif incoming.message == "reset":
                 self.started = False
                 self.ingame = False
+                pads = []
 
         elif not incoming in pads :
             pads.append(incoming)
