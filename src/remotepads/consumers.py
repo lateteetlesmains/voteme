@@ -22,12 +22,12 @@ class MyThread(Thread):
 
     def run(self):
         while not self.stopped.wait(5.0):
-            print(self.currentPlayer)
-            d.draw(1,pads[currentPlayer].name,leds.Color.Blue)
-            d.draw(5,pads[currentPlayer].score,leds.Color.Green)
-            self.currentPlayer += 1
-            if self.currentPlayer > len(pads):
-                self.currentPlayer = 0
+            if(len(pads)> 0):
+                d.draw(1,pads[currentPlayer].name,leds.Color.Blue)
+                d.draw(5,pads[currentPlayer].score,leds.Color.Green)
+                self.currentPlayer += 1
+                if self.currentPlayer > len(pads):
+                    self.currentPlayer = 0
 
 stopFlag = Event()
 thread = MyThread(stopFlag)
