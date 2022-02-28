@@ -11,6 +11,8 @@ var soundPaths = [
     { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
 ]
 
+let msg = { "id": "admin", "player_id": '', "message": "", 'score':'0' };
+
 const webSocket = new WebSocket(
     'ws://'
     + window.location.host
@@ -108,7 +110,10 @@ webSocket.onmessage = function (e) {
             </div>
 
             `);
-            let msg = { "id": "admin", "player_id": incomingPlayer.id, "message": "OK" };
+            // let msg = { "id": "admin", "player_id": incomingPlayer.id, "message": "OK", 'score':'0' };
+            msg.player_id = incomingPlayer.id
+            msg.id = 'admin';
+            msg.message = 'OK';
             webSocket.send(JSON.stringify(msg));
 
         }
@@ -125,14 +130,16 @@ webSocket.onmessage = function (e) {
                     player.answer = new ExpectedAnswer(data.message);
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
                     log(expected_answer)
-                    $(`#${player.number}_answer`).text(player.answer);
-                    let msg = { "id": "admin", "player_id": player.id, "message": "" };
-
+                    // let msg = { "id": "admin", "player_id": player.id, "message": "", "score": player.score };
+                    msg.id = 'admin';
                     if (player.answer.answer == expected_answer.answer) {
                         $(`#box_Buzzer_${player.number}`).addClass('good_answer');
                         player.score += 1;
                         player.update();
                         msg.message = "good";
+                        msg.score = player.score;
+                        
+                        msg.player_id = player.id;
                         // $('#player_' + player.number + '_score').text(player.score +
                         //     (player.score > 1 ? " Points" : " Point"));
                     }
@@ -140,6 +147,7 @@ webSocket.onmessage = function (e) {
                     else {
                         $(`#box_Buzzer_${player.number}`).addClass('bad_answer');
                         msg.message = "bad";
+                        msg.player_id = player.id;
                     }
                     log(msg)
                     webSocket.send(JSON.stringify(msg));
@@ -155,7 +163,11 @@ webSocket.onmessage = function (e) {
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
                     quick_players[0].score += 1;
                     quick_players[0].update();
-                    let msg = { "id": "admin", "player_id": quick_players[0].id, "message": "faster" };
+                    // let msg = { "id": "admin", "player_id": quick_players[0].id, "message": "faster", "score": quick_players[0].score };
+                    msg.player_id = quick_players[0].id;
+                    msg.score = quick_players[0].score
+                    msg.message = 'faster';
+                    msg.id = 'admin';
                     webSocket.send(JSON.stringify(msg));
                     // $('#player_' + player.number + '_score').text(player.score +
                     //     player.score > 1 ? " Points" : " Point");
@@ -177,7 +189,8 @@ webSocket.onmessage = function (e) {
 };
 
 webSocket.onopen = function (e) {
-    let msg = { 'id': 'admin', 'player_id': '', 'message': "reset" };
+    msg.message = "reset";
+    msg.player_id = '';
     webSocket.send(JSON.stringify(msg));
 }
 webSocket.onclose = function (e) {
@@ -200,7 +213,7 @@ $(() => {
     })
 
     $('#start_btn').on('click', function (e) {
-        message = { 'id': 'admin', 'player_id': "", 'message': "start" };
+        // message = { 'id': 'admin', 'player_id': "", 'message': "start", 'score':'0' };
         log($(e.target).val());
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs
@@ -208,7 +221,11 @@ $(() => {
             $('#start_text').addClass("hidden");
             $('#waiting_players').removeClass('hidden');
             $('.form').removeClass('hidden');
-            message.message = "start"
+            msg.message = "start"
+            msg.player_id = '';
+            msg.id = 'admin';
+            msg.player_id = '';
+
             waiting_players = true;
             gameStarted = false;
         }
@@ -233,9 +250,11 @@ $(() => {
                 });
             });
             $(e.target).val("Réinitialiser");
-            message.message = "game"
+            msg.message = "game"
+            msg.player_id = '';
             waiting_players = false;
             gameStarted = true;
+
             $('.ingame').removeClass("hidden");
 
         }
@@ -247,7 +266,8 @@ $(() => {
             $(e.target).val("Démarrer");
             $('#players_container').text('');
             $('.ingame').addClass("hidden");
-            message.message = "reset"
+            msg.message = "reset"
+            msg.player_id = '';
             waiting_players = false;
             gameStarted = false;
             players = [];
@@ -255,8 +275,8 @@ $(() => {
 
 
         }
-        log(message);
-        webSocket.send(JSON.stringify(message));
+        log(msg);
+        webSocket.send(JSON.stringify(msg));
     });
 
     $('#new_question_btn').click(function (e) {
@@ -267,7 +287,11 @@ $(() => {
             elt.has_answered = false;
         });
         quick_players = []
-        let msg = { "id": "admin", "player_id": "", "message": "game" };
+        // let msg = { "id": "admin", "player_id": "", "message": "game", 'score':'0' };
+        msg.id = "admin";
+        msg.player_id = '';
+        msg.message = '';
+        msg.message = 'game';
         webSocket.send(JSON.stringify(msg));
     });
 
