@@ -1,4 +1,5 @@
 import json
+from . import leds
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class Pad():
@@ -12,6 +13,8 @@ class Pad():
         return self.id == __o.id
 
 pads = []
+d = leds.Display(leds.board.D18, 35)
+
 
 class PadConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -23,6 +26,7 @@ class PadConsumer(AsyncWebsocketConsumer):
         # print(self.room_name)
         # self.group_name = 'chat_%s' % self.room_name
         self.group_name = 'pads'
+        d.draw(5, 'p1', leds.Color.Blue)
         # Joint le groupe
         await self.channel_layer.group_add(
             self.group_name,
