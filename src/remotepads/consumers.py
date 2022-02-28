@@ -77,7 +77,7 @@ class PadConsumer(AsyncWebsocketConsumer):
                     pad.score = incoming.score
                     break
             d.draw(1,pads[0].name,leds.Color.Blue)
-            d.draw(1,pads[0].score,leds.Color.Green)
+            d.draw(5,pads[0].score,leds.Color.Green)
 
         
 
