@@ -1,8 +1,44 @@
 from itertools import starmap
 import json
 from . import leds
+from threading import Timer, Thread, Event
 from channels.generic.websocket import AsyncWebsocketConsumer
 pads = []
+currentPlayer = 0
+d = leds.Display(leds.board.D18, 35)
+
+def updateLeds():
+    global currentPlayer
+    # d.draw(1,pads[currentPlayer].name,leds.Color.Blue)
+    # d.draw(5,pads[currentPlayer].score,leds.Color.Green)
+
+
+
+class MyThread(Thread):
+    def __init__(self, event):
+        Thread.__init__(self)
+        self.stopped = event
+        self.currentPlayer = 0
+
+    def run(self):
+        while not self.stopped.wait(5.0):
+            print(self.currentPlayer)
+            d.draw(1,pads[currentPlayer].name,leds.Color.Blue)
+            d.draw(5,pads[currentPlayer].score,leds.Color.Green)
+            self.currentPlayer += 1
+            if self.currentPlayer > len(pads):
+                self.currentPlayer = 0
+
+stopFlag = Event()
+thread = MyThread(stopFlag)
+thread.start()
+
+
+
+    
+
+
+
 class Pad():
     def __init__(self, id, message) -> None:
         self.id = id
@@ -15,7 +51,7 @@ class Pad():
     def __eq__(self, __o: object) -> bool:
         return self.id == __o.id
 
-d = leds.Display(leds.board.D18, 35)
+
 
 
 class PadConsumer(AsyncWebsocketConsumer):
@@ -76,8 +112,7 @@ class PadConsumer(AsyncWebsocketConsumer):
                 if pad.id == incoming.playerid:
                     pad.score = incoming.score
                     break
-            d.draw(1,pads[0].name,leds.Color.Blue)
-            d.draw(5,pads[0].score,leds.Color.Green)
+
 
         
 
