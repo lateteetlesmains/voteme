@@ -12,10 +12,10 @@ class Color:
 
 
 class Display:
-
     def __init__(self, pin, numpix) -> None:
         self.pixels = neopixel.NeoPixel(pin, numpix)
         self.texts = {
+            '.': [6],
             'p': [0, 1, 4, 5, 6],
             'o': [0, 1, 2, 3, 4, 5],
             'u': [1, 2, 3, 4, 5],
@@ -53,7 +53,7 @@ class Display:
             4: (21, 22, 23, 24, 25, 26, 27),
             5: (28, 29, 30, 31, 32, 33, 34)
         }
-        
+
         formatted_text = self.__format(text)
         screen_offset = screen
         if len(formatted_text) > len(screens):
@@ -62,18 +62,22 @@ class Display:
             return
         if screen + len(formatted_text) > len(screens):
             screen_offset = 1 + (screen - len(formatted_text))
-        
+
         for pix in formatted_text:
             for offled in screens[screen_offset]:
-                self.pixels[offled] = (0,0,0) #reset des pixel du screen avant d'ecrire
+                # reset des pixels du screen avant d'ecrire
+                self.pixels[offled] = (0, 0, 0)
 
             for led in pix:
                 self.pixels[screens[screen_offset][led]] = color
             screen_offset += 1
+    def clear(self):
+        self.pixels.fill((0,0,0))
+
 
 if __name__ == '__main__':
     d = Display(board.D18, 35)
-    d.draw(5,125,Color.Green)
+    d.draw(5, 125, Color.Green)
 
 # pixels.fill((0,255,0))
 # pixels[0] = (255, 255, 0)

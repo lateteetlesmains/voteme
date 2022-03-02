@@ -291,7 +291,7 @@ $(() => {
         msg.id = "admin";
         msg.player_id = '';
         msg.message = '';
-        msg.message = 'game';
+        msg.message = 'new_quest';
         webSocket.send(JSON.stringify(msg));
     });
 
