@@ -3,15 +3,15 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from threading import Thread, Event
 import json
 
-from remotepads.leds import Color
-
 debug = False
 waiting = False
 if not debug:
-    from . import leds
+    from remotepads.leds import Color, Display, board
+
 pads = []
 if not debug:
-    d = leds.Display(leds.board.D18, 35)
+    d = Display(board.D18, 35)
+
 
 class ScreensThread(Thread):
     def __init__(self, event):
@@ -23,26 +23,26 @@ class ScreensThread(Thread):
 
     def run(self):
         while not self.stopped.wait(2.0):
-            if waiting:
-                d.draw(2,'.',leds.Color.Purple)
-                d.draw(3,'.',leds.Color.Purple)
-                d.draw(4,'.',leds.Color.Purple)
+            if waiting and len(pads) == 0:
+                d.draw(2, '.', Color.Purple)
+                d.draw(3, '.', Color.Purple)
+                d.draw(4, '.', Color.Purple)
+            elif waiting:
+                d.draw(1, 'p', Color.Blue)
+                d.draw(5, len(pads), Color.Orange)
             elif (len(pads) > 0):
                 if not debug:
-                    d.draw(1,pads[self.currentPlayer].name,leds.Color.Blue)
-                    d.draw(5,pads[self.currentPlayer].score,leds.Color.Green)
+                    d.draw(1, pads[self.currentPlayer].name, Color.Blue)
+                    d.draw(5, pads[self.currentPlayer].score, Color.Green)
                     # sleep(.5)
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads) - 1:
                     self.currentPlayer = 0
-                print('hello %s, %s' % (self.currentPlayer, len(pads)))
-            
 
 
 stopFlag = Event()
 thread = ScreensThread(stopFlag)
 thread.start()
-
 
 
 class Pad():
@@ -103,14 +103,13 @@ class PadConsumer(AsyncWebsocketConsumer):
             elif incoming.message == 'new_quest':
                 self.ingame = True
                 waiting = False
-                
+
             elif incoming.message == "reset":
                 self.started = False
                 self.ingame = False
                 waiting = False
                 pads = []
                 d.clear()
-                
 
         elif not incoming in pads:
             pads.append(incoming)
@@ -147,4 +146,3 @@ class PadConsumer(AsyncWebsocketConsumer):
             'player_id': player_id,
             'score': score
         }))
-
