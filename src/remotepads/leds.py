@@ -1,19 +1,64 @@
-import board
-import neopixel
+from typing import List
+
+
+try:
+    import board
+    import neopixel
+except:
+    print("erreur import création de fausses classes (seulement pour du debug)")
+
+    class board:
+        D18 = 0
+
+    class pixels:
+        def fill(somearg):
+            pass
+
+    class neopixel(List):
+        def __init__(self, pin, numpix) -> None:
+            self.pixels = pixels()
+            for i in range(0, numpix):
+                self.append(i)
+
+        def fill(self, somearg):
+            pass
+
+
 from time import sleep
 
 
 class Color:
-    Red = (255, 0, 0)
-    Green = (0, 255, 0)
-    Blue = (0, 0, 255)
-    Purple = (255, 0, 255)
-    Orange = (255, 127, 0)
+    def __init__(self, name, r, g, b) -> None:
+        self.name = name
+        self.r = r
+        self.g = g
+        self.b = b
+
+    def color(self):
+        return (self.r, self.g, self.b)
+
+
+class Colors:
+    Black = Color("Black", 0, 0, 0)
+    Red = Color("Red", 255, 0, 0)
+    Green = Color("Green", 0, 255, 0)
+    Blue = Color("Blue", 0, 0, 255)
+    Purple = Color("Purple", 255, 0, 255)
+    Orange = Color("Orange", 255, 127, 0)
+    yellow = Color("yellow", 255, 255, 0)
+    RedRuby = Color("RedRuby", 163, 0, 21)
+    BlueLavender = Color("BlueLavender", 177, 145, 255)
+    Turquoise = Color("Turquoise", 65, 234, 212)
+    PurpleDark = Color("PurpleDark", 94, 35, 157)
 
 
 class Display:
     def __init__(self, pin, numpix) -> None:
-        self.pixels = neopixel.NeoPixel(pin, numpix)
+        try:
+            self.pixels = neopixel.NeoPixel(pin, numpix)
+        except:
+            self.pixels = neopixel(pin, numpix)
+
         self.texts = {
             '.': [6],
             'p': [0, 1, 4, 5, 6],
@@ -71,13 +116,31 @@ class Display:
             for led in pix:
                 self.pixels[screens[screen_offset][led]] = color
             screen_offset += 1
+
     def clear(self):
-        self.pixels.fill((0,0,0))
+        self.pixels.fill((0, 0, 0))
 
 
 if __name__ == '__main__':
     d = Display(board.D18, 35)
-    d.draw(5, 125, Color.Green)
+    d.draw(5, 125, Color.Turquoise)
+    print('turquoise')
+    sleep(2)
+    d.draw(5, 125, Color.BlueLavender)
+    print('lavender')
+    sleep(2)
+    d.draw(5, 125, Color.RedRuby)
+    print('ruby')
+    sleep(2)
+    d.draw(5, 125, Color.Red)
+    print('red')
+    sleep(2)
+    d.draw(5, 125, Color.PurpleDark)
+    print('purple dark')
+    sleep(2)
+    d.draw(5, 125, Color.Purple)
+    print('purple')
+
 
 # pixels.fill((0,255,0))
 # pixels[0] = (255, 255, 0)

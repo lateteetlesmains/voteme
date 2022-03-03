@@ -11,7 +11,7 @@ var soundPaths = [
     { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
 ]
 
-let msg = { "id": "admin", "player_id": '', "message": "", 'score':'0' };
+let msg = { "id": "admin", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
 const webSocket = new WebSocket(
     'ws://'
@@ -28,6 +28,9 @@ class Player {
         this.has_answered = false;
         this.rank = rank;
         this.score = 0;
+        this.color_r = 0;
+        this.color_g = 0;
+        this.color_b = 0;
     }
     update() {
         $(`#player_${this.number}_score`).text(this.score +
@@ -65,7 +68,6 @@ var soundList = []
 
 webSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
-    log(data)
     if (data.id != "admin") {
 
         if (waiting_players) {
@@ -73,7 +75,11 @@ webSocket.onmessage = function (e) {
             $('#waiting_players').addClass('hidden');
             $('#players_container').removeClass('hidden');
             var incomingPlayer = new Player(data.id, undefined);
-
+            if (data.message == "Press") {
+                incomingPlayer.color_r = data.color_r;
+                incomingPlayer.color_g = data.color_g;
+                incomingPlayer.color_b = data.color_b;
+            }
             players.push(incomingPlayer);
 
 
@@ -114,6 +120,15 @@ webSocket.onmessage = function (e) {
             msg.player_id = incomingPlayer.id
             msg.id = 'admin';
             msg.message = 'OK';
+            log(data.message)
+
+            //On ne renvoie les couleurs que si le candidature
+            msg.color_r = incomingPlayer.color_r;
+            msg.color_g = incomingPlayer.color_g;
+            msg.color_b = incomingPlayer.color_b;
+
+
+            log(msg)
             webSocket.send(JSON.stringify(msg));
 
         }
@@ -138,7 +153,7 @@ webSocket.onmessage = function (e) {
                         player.update();
                         msg.message = "good";
                         msg.score = player.score;
-                        
+
                         msg.player_id = player.id;
                         // $('#player_' + player.number + '_score').text(player.score +
                         //     (player.score > 1 ? " Points" : " Point"));

@@ -1,16 +1,24 @@
+from remotepads.leds import Color, Colors, Display, board
 from time import sleep
 from channels.generic.websocket import AsyncWebsocketConsumer
 from threading import Thread, Event
 import json
 
-debug = False
+debug = True
 waiting = False
-if not debug:
-    from remotepads.leds import Color, Display, board
 
 pads = []
-if not debug:
-    d = Display(board.D18, 35)
+
+d = Display(board.D18, 35)
+
+# /!\ Maintenir l'ordre des couleurs car lié aux idx du tableau client /!\
+colors = [
+    Colors.RedRuby,
+    Colors.BlueLavender,
+    Colors.Turquoise,
+    Colors.Purple,
+    Colors.PurpleDark
+]
 
 
 class ScreensThread(Thread):
@@ -24,16 +32,18 @@ class ScreensThread(Thread):
     def run(self):
         while not self.stopped.wait(2.0):
             if waiting and len(pads) == 0:
-                d.draw(2, '.', Color.Purple)
-                d.draw(3, '.', Color.Purple)
-                d.draw(4, '.', Color.Purple)
+                d.draw(2, '.', Colors.Purple.color())
+                d.draw(3, '.', Colors.Purple.color())
+                d.draw(4, '.', Colors.Purple.color())
             elif waiting:
-                d.draw(1, 'p', Color.Blue)
-                d.draw(5, len(pads), Color.Orange)
+                d.draw(1, 'p', Colors.Blue.color())
+                d.draw(5, len(pads), Colors.Orange.color())
             elif (len(pads) > 0):
                 if not debug:
-                    d.draw(1, pads[self.currentPlayer].name, Color.Blue)
-                    d.draw(5, pads[self.currentPlayer].score, Color.Green)
+                    d.draw(1, pads[self.currentPlayer].name,
+                           Colors.Blue.color())
+                    d.draw(5, pads[self.currentPlayer].score,
+                           Colors.Green.color())
                     # sleep(.5)
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads) - 1:
@@ -52,9 +62,10 @@ class Pad():
         self.message = message
         self.playerid = ""
         self.score = 0
+        self.color = Colors.Black
 
     def __repr__(self) -> str:
-        return self.name + '(' + self.id + ') ' + str(self.score)
+        return self.name + '(' + self.id + ')' + " envoie : " + self.message + "color : " + str(self.color.color())
 
     def __eq__(self, __o: object) -> bool:
         return self.id == __o.id
@@ -83,13 +94,13 @@ class PadConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None):
         global pads, waiting
+        idx = 0
         text_data_json = json.loads(text_data)
         # print(text_data_json)
         incoming = Pad(text_data_json['id'], text_data_json['message'])
         incoming.score = text_data_json['score']
         incoming.playerid = text_data_json['player_id']
 
-        # print('message : %s' % incoming.message)
         if incoming.id == 'admin':
             if incoming.message == 'start':
                 self.started = True
@@ -110,11 +121,25 @@ class PadConsumer(AsyncWebsocketConsumer):
                 waiting = False
                 pads = []
                 d.clear()
+            elif incoming.message == "OK":
+                # on renvoie la bonne couleur au pad à qui on dit ok
+                for pad in pads:
+                    if pad.id == incoming.playerid:
+                        idx =pads.index(pad)
+                        break
+                # idx = pads.index(
+                #     next((pad for pad in pads if pad.id == incoming.playerid), None))
 
         elif not incoming in pads:
+            # on définit les valeurs des pads entrant apres "press"
             pads.append(incoming)
             idx = pads.index(incoming)
+            incoming.color = colors[idx]
+
+            # print('idx in apprend : %d' % idx)
             pads[idx].name = 'p' + str((idx + 1))
+
+            # print(incoming.color.color())
 
         if self.ingame:
             if incoming.message == 'good' or incoming.message == 'faster':
@@ -122,8 +147,8 @@ class PadConsumer(AsyncWebsocketConsumer):
                     if pad.id == incoming.playerid:
                         pad.score = incoming.score
                         break
-                print(pads)
-
+        # print('idx before send : %d' % idx)
+        # print(text_data_json)
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -131,7 +156,11 @@ class PadConsumer(AsyncWebsocketConsumer):
                 'message': text_data_json['message'],
                 'id': text_data_json['id'],
                 'player_id': text_data_json['player_id'],
-                'score': text_data_json['score']
+                'score': text_data_json['score'],
+                'color_r': pads[idx].color.r if len(pads) > 0 else 0,
+                'color_g': pads[idx].color.g if len(pads) > 0 else 0,
+                'color_b': pads[idx].color.b if len(pads) > 0 else 0
+
             }
         )
 
@@ -140,9 +169,13 @@ class PadConsumer(AsyncWebsocketConsumer):
         player_id = event['player_id']
         score = event['score']
         id = event['id']
+
         await self.send(text_data=json.dumps({
-            'message': message,
-            'id': id,
-            'player_id': player_id,
-            'score': score
+            'message': event['message'],
+            'id': event['id'],
+            'player_id': event['player_id'],
+            'score':  event['score'],
+            'color_r': event['color_r'],
+            'color_g': event['color_g'],
+            'color_b': event['color_b']
         }))
