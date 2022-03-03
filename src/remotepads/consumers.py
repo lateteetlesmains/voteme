@@ -4,7 +4,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from threading import Thread, Event
 import json
 
-debug = True
 waiting = False
 
 pads = []
@@ -37,14 +36,12 @@ class ScreensThread(Thread):
                 d.draw(4, '.', Colors.Purple.color())
             elif waiting:
                 d.draw(1, 'p', Colors.Blue.color())
-                d.draw(5, len(pads), Colors.Orange.color())
+                d.draw(5, len(pads), colors[len(pads) - 1].color())
             elif (len(pads) > 0):
-                if not debug:
-                    d.draw(1, pads[self.currentPlayer].name,
-                           Colors.Blue.color())
-                    d.draw(5, pads[self.currentPlayer].score,
-                           Colors.Green.color())
-                    # sleep(.5)
+                d.draw(1, pads[self.currentPlayer].name,
+                       pads[self.currentPlayer].color.color())
+                d.draw(5, pads[self.currentPlayer].score,
+                       pads[self.currentPlayer].color.color())
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads) - 1:
                     self.currentPlayer = 0
@@ -125,7 +122,7 @@ class PadConsumer(AsyncWebsocketConsumer):
                 # on renvoie la bonne couleur au pad à qui on dit ok
                 for pad in pads:
                     if pad.id == incoming.playerid:
-                        idx =pads.index(pad)
+                        idx = pads.index(pad)
                         break
                 # idx = pads.index(
                 #     next((pad for pad in pads if pad.id == incoming.playerid), None))
