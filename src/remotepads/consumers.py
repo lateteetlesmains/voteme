@@ -31,6 +31,7 @@ class ScreensThread(Thread):
     def run(self):
         while not self.stopped.wait(2.0):
             if waiting and len(pads) == 0:
+                self.currentPlayer = 0
                 d.draw(2, '.', Colors.Purple.color())
                 d.draw(3, '.', Colors.Purple.color())
                 d.draw(4, '.', Colors.Purple.color())
