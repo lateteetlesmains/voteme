@@ -93,6 +93,7 @@ webSocket.onmessage = function (e) {
                     <div class="player_name_score_container">
                         <div class='player_name'>
                             <h2>Joueur ${incomingPlayer.number}</h2>
+                            <div class="player_color" id=player_${incomingPlayer.number}_color></div>
                         </div>
                         <div class='score_container'>
                             <div>
@@ -120,15 +121,18 @@ webSocket.onmessage = function (e) {
             msg.player_id = incomingPlayer.id
             msg.id = 'admin';
             msg.message = 'OK';
-            log(data.message)
 
             //On ne renvoie les couleurs que si le candidature
             msg.color_r = incomingPlayer.color_r;
             msg.color_g = incomingPlayer.color_g;
             msg.color_b = incomingPlayer.color_b;
 
-
-            log(msg)
+            $(`#player_${incomingPlayer.number}_color`).css({
+                "background-color": `rgb(${incomingPlayer.color_r}, ${incomingPlayer.color_g},${incomingPlayer.color_b})`,
+                "width": "80px",
+                "height": "20px",
+            });
+            // log(msg)
             webSocket.send(JSON.stringify(msg));
 
         }
@@ -144,7 +148,7 @@ webSocket.onmessage = function (e) {
                 if (currentGameMode == GameModes.QCM) {
                     player.answer = new ExpectedAnswer(data.message);
                     // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
-                    log(expected_answer)
+                    // log(expected_answer)
                     // let msg = { "id": "admin", "player_id": player.id, "message": "", "score": player.score };
                     msg.id = 'admin';
                     if (player.answer.answer == expected_answer.answer) {
@@ -209,7 +213,7 @@ webSocket.onopen = function (e) {
     webSocket.send(JSON.stringify(msg));
 }
 webSocket.onclose = function (e) {
-    console.error('Chat socket closed unexpectedly');
+    console.error("le socket s'est fermé inopinément");
 };
 
 

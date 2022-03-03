@@ -108,6 +108,16 @@ body {
     align-items: center;
 }
 
+.player_name{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.player_color{
+    border-radius: .3rem;
+}
+
 
 /* Animation */
 #loader_text {
