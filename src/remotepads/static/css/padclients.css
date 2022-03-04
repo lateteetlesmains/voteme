@@ -118,7 +118,12 @@ body {
     border-radius: .3rem;
 }
 
-
+.audio_container{
+    display: flex;
+}
+.player_play{
+    background-color: white;
+}
 /* Animation */
 #loader_text {
     margin: 2rem;

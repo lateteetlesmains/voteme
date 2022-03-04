@@ -31,6 +31,7 @@ class Player {
         this.color_r = 0;
         this.color_g = 0;
         this.color_b = 0;
+        this.sound = "";
     }
     update() {
         $(`#player_${this.number}_score`).text(this.score +
@@ -80,11 +81,9 @@ webSocket.onmessage = function (e) {
                 incomingPlayer.color_g = data.color_g;
                 incomingPlayer.color_b = data.color_b;
             }
+
             players.push(incomingPlayer);
-
-
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
-
 
             $('#players_container').append(`
             
@@ -108,16 +107,54 @@ webSocket.onmessage = function (e) {
                     </div>
                                       
                 <div class='audio_container'>
-                    <audio src="/static/audio/smb_jump-super.wav" type="audio/mpeg">
+                    <audio id=${incomingPlayer.number}_audio src="/static/audio/smb_jump-super.wav" type="audio/mpeg">
                             Your browser does not support the audio element.
                     </audio>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dropdown button
+                        </button>
+                        <div id="sound_drop" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <!-- <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a> -->
+                        </div>
+                    </div>
+                    <div>
+                        <button id="${incomingPlayer.number}_play">Play</button>
+                    </div>
                  
                 </div>
                 
             </div>
 
             `);
-            // let msg = { "id": "admin", "player_id": incomingPlayer.id, "message": "OK", 'score':'0' };
+
+            //Audio
+            soundPaths.forEach(sound => {
+                $('#sound_drop').append(`
+                    <div >
+                        <a class="player_play" href="#">Play</a>
+                        <button id=${incomingPlayer.number}_${sound.soundName} class="dropdown-item" data-path=${sound.path} >${sound.soundName}</button>
+                    </div>
+                `);
+                $(`#${incomingPlayer.number}_${sound.soundName}`).on('click', function (_e) {
+                    incomingPlayer.sound = sound.path;
+                    $('#dropdownMenuButton').text(`${sound.soundName}`)
+                    $(`#${incomingPlayer.number}_audio`).attr('src', `${sound.path}`);
+
+
+                });
+            });
+            $(`#${incomingPlayer.number}_play`).on('click', function () {
+                $(`#${incomingPlayer.number}_audio`)[0].play();
+            });
+
+
+
+            //msg web socket
+            log(players);
             msg.player_id = incomingPlayer.id
             msg.id = 'admin';
             msg.message = 'OK';
@@ -207,12 +244,12 @@ webSocket.onmessage = function (e) {
 
 };
 
-webSocket.onopen = function (e) {
+webSocket.onopen = function (_e) {
     msg.message = "reset";
     msg.player_id = '';
     webSocket.send(JSON.stringify(msg));
 }
-webSocket.onclose = function (e) {
+webSocket.onclose = function (_e) {
     console.error("le socket s'est fermé inopinément");
 };
 
@@ -254,16 +291,16 @@ $(() => {
             if (players.length < 1)
                 return;
             players.forEach(player => {
-                $(`#btn_buzzer_${player.number}_plus`).on('click', function (e) {
+                $(`#btn_buzzer_${player.number}_plus`).on('click', function (_e) {
                     player.score += 1;
                     player.update();
 
                 });
-                $(`#btn_buzzer_${player.number}_minus`).on('click', function (e) {
+                $(`#btn_buzzer_${player.number}_minus`).on('click', function (_e) {
                     player.score -= 1;
                     player.update();
                 });
-                $(`#btn_buzzer_${player.number}_reset`).on('click', function (e) {
+                $(`#btn_buzzer_${player.number}_reset`).on('click', function (_e) {
                     player.score = 0;
                     player.update();
                 });
@@ -298,7 +335,7 @@ $(() => {
         webSocket.send(JSON.stringify(msg));
     });
 
-    $('#new_question_btn').click(function (e) {
+    $('#new_question_btn').click(function (_e) {
         players.forEach(elt => {
             $(`#box_Buzzer_${elt.number}`).hasClass('good_answer') ?
                 $(`#box_Buzzer_${elt.number}`).removeClass('good_answer') :
@@ -313,6 +350,7 @@ $(() => {
         msg.message = 'new_quest';
         webSocket.send(JSON.stringify(msg));
     });
+
 
 
 })
