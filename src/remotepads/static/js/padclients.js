@@ -32,6 +32,7 @@ class Player {
         this.color_g = 0;
         this.color_b = 0;
         this.sound = "";
+        this.sameSound = false;
     }
     update() {
         $(`#player_${this.number}_score`).text(this.score +
@@ -67,6 +68,15 @@ var players = [];
 var quick_players = [];
 var soundList = []
 
+function getSoundIndex(currentindex) {
+    let hasSoundPlayerIdx = players.findIndex(player => player.sound.path == soundPaths[currentindex].path);
+    if (hasSoundPlayerIdx < 0)
+        return currentindex;
+    else {
+        return getSoundIndex((currentindex + 1) % soundPaths.length);
+    }
+}
+
 webSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     if (data.id != "admin") {
@@ -84,6 +94,8 @@ webSocket.onmessage = function (e) {
 
             players.push(incomingPlayer);
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
+
+            incomingPlayer.sound = soundPaths[getSoundIndex(incomingPlayer.number - 1)];
 
             $('#players_container').append(`
             
@@ -107,15 +119,15 @@ webSocket.onmessage = function (e) {
                     </div>
                                       
                 <div class='audio_container'>
-                    <audio id=${incomingPlayer.number}_audio src="/static/audio/smb_jump-super.wav" type="audio/mpeg">
+                    <audio id=${incomingPlayer.number}_audio src=" ${incomingPlayer.sound.path}" type="audio/mpeg">
                             Your browser does not support the audio element.
                     </audio>
                     
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown button
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ${incomingPlayer.sound.soundName}
                         </button>
-                        <div id="sound_drop" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div id="sound_drop_${incomingPlayer.number}" class="dropdown-menu" aria-labelledby="dropdownMenuButtonSound">
                             <!-- <a class="dropdown-item" href="#">Action</a>
                             <a class="dropdown-item" href="#">Another action</a>
                             <a class="dropdown-item" href="#">Something else here</a> -->
@@ -133,20 +145,66 @@ webSocket.onmessage = function (e) {
 
             //Audio
             soundPaths.forEach(sound => {
-                $('#sound_drop').append(`
-                    <div >
-                        <a class="player_play" href="#">Play</a>
-                        <button id=${incomingPlayer.number}_${sound.soundName} class="dropdown-item" data-path=${sound.path} >${sound.soundName}</button>
-                    </div>
+                $(`#sound_drop_${incomingPlayer.number}`).append(`
+                   
+                    <button id=${incomingPlayer.number}_${sound.soundName} class="dropdown-item" data-path=${sound.path} >${sound.soundName}</button>
+                   
                 `);
+
                 $(`#${incomingPlayer.number}_${sound.soundName}`).on('click', function (_e) {
-                    incomingPlayer.sound = sound.path;
-                    $('#dropdownMenuButton').text(`${sound.soundName}`)
-                    $(`#${incomingPlayer.number}_audio`).attr('src', `${sound.path}`);
+                    // on met à jour le joueur dont on change la valeur du son
+                    incomingPlayer.sound = sound;
+                    // on met à jour le même joueur dans la liste des joueurs
+                    players[players.indexOf(incomingPlayer)].sound = sound
+                    $(`#${incomingPlayer.number}_audio`).attr('src', incomingPlayer.sound.path);
+                    //on vérifie que 1 ou pls joueur n'a pas déjà le son
+                    //pour cela on crée un set vide
+                    let foundSounds = new Set()
+                    //on itère sur la liste des joueurs
+                    players.forEach(player => {
+                        // on ajoute le chemin du son dans le set
+                        if (foundSounds.size === foundSounds.add(player.sound.path).size) {
+                            // si une fois l'ajout fait, le set n'a pas changé de taille alors doublon
+                            // Dans ce cas je récupère tous les joueurs ayant le même son
+                            players.filter(plr => plr.sound.path === player.sound.path).forEach(plr => {
+                                //et je les flag à true
+                                plr.sameSound = true;
+                            })
+                        }
+                        // sinon pas de doublon, on flag à false
+                        else {
+                            player.sameSound = false;
+                        }
+
+
+                    });
+
+                    // duplicates.forEach(duplicate => {
+                    //     players[players.indexOf(duplicate)].sameSound = true;
+                    // });
+
+                    players.forEach(player => {
+                        if (player.sameSound)
+                            $(`#dropdownMenuButtonSound_${player.number}`).addClass("same_sound");
+                        else
+                            $(`#dropdownMenuButtonSound_${player.number}`).removeClass("same_sound");
+
+                    });
+
+
+
+
+
+
+                    $(`#dropdownMenuButtonSound_${incomingPlayer.number}`).text(`${sound.soundName}`)
+
 
 
                 });
             });
+
+
+
             $(`#${incomingPlayer.number}_play`).on('click', function () {
                 $(`#${incomingPlayer.number}_audio`)[0].play();
             });
@@ -154,7 +212,7 @@ webSocket.onmessage = function (e) {
 
 
             //msg web socket
-            log(players);
+
             msg.player_id = incomingPlayer.id
             msg.id = 'admin';
             msg.message = 'OK';
@@ -219,6 +277,8 @@ webSocket.onmessage = function (e) {
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
                     quick_players[0].score += 1;
                     quick_players[0].update();
+                    $(`#${quick_players[0].number}_audio`)[0].play();
+
                     // let msg = { "id": "admin", "player_id": quick_players[0].id, "message": "faster", "score": quick_players[0].score };
                     msg.player_id = quick_players[0].id;
                     msg.score = quick_players[0].score

@@ -114,6 +114,7 @@ body {
     align-items: center;
 }
 
+/* audio */
 .player_color{
     border-radius: .3rem;
 }
@@ -123,6 +124,10 @@ body {
 }
 .player_play{
     background-color: white;
+}
+
+.same_sound{
+    color: red;
 }
 /* Animation */
 #loader_text {
