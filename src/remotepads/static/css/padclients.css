@@ -125,9 +125,14 @@ body {
 .player_play{
     background-color: white;
 }
-
+.sound_list_drop{
+    min-width: 8rem;
+}
 .same_sound{
     color: red;
+}
+.btn_play{
+    margin-left: .6rem;
 }
 /* Animation */
 #loader_text {

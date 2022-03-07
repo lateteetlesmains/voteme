@@ -124,7 +124,7 @@ webSocket.onmessage = function (e) {
                     </audio>
                     
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle sound_list_drop" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             ${incomingPlayer.sound.soundName}
                         </button>
                         <div id="sound_drop_${incomingPlayer.number}" class="dropdown-menu" aria-labelledby="dropdownMenuButtonSound">
@@ -134,7 +134,7 @@ webSocket.onmessage = function (e) {
                         </div>
                     </div>
                     <div>
-                        <button id="${incomingPlayer.number}_play">Play</button>
+                        <button title="Jouer le son" class="btn btn-primary btn_play" id="${incomingPlayer.number}_play"><i class="fa-solid fa-play"></i></button>
                     </div>
                  
                 </div>
@@ -191,25 +191,15 @@ webSocket.onmessage = function (e) {
 
                     });
 
-
-
-
-
-
                     $(`#dropdownMenuButtonSound_${incomingPlayer.number}`).text(`${sound.soundName}`)
-
-
 
                 });
             });
 
 
-
             $(`#${incomingPlayer.number}_play`).on('click', function () {
                 $(`#${incomingPlayer.number}_audio`)[0].play();
             });
-
-
 
             //msg web socket
 
@@ -227,7 +217,6 @@ webSocket.onmessage = function (e) {
                 "width": "80px",
                 "height": "20px",
             });
-            // log(msg)
             webSocket.send(JSON.stringify(msg));
 
         }
@@ -242,9 +231,6 @@ webSocket.onmessage = function (e) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
                     player.answer = new ExpectedAnswer(data.message);
-                    // player.answer = !player.has_answered ? new ExpectedAnswer(data.message) : player.answer;
-                    // log(expected_answer)
-                    // let msg = { "id": "admin", "player_id": player.id, "message": "", "score": player.score };
                     msg.id = 'admin';
                     if (player.answer.answer == expected_answer.answer) {
                         $(`#box_Buzzer_${player.number}`).addClass('good_answer');
@@ -263,7 +249,6 @@ webSocket.onmessage = function (e) {
                         msg.message = "bad";
                         msg.player_id = player.id;
                     }
-                    log(msg)
                     webSocket.send(JSON.stringify(msg));
 
 
@@ -271,7 +256,6 @@ webSocket.onmessage = function (e) {
                 else {
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
-                    log(quick_players);
 
                     if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
@@ -330,7 +314,6 @@ $(() => {
 
     $('#start_btn').on('click', function (e) {
         // message = { 'id': 'admin', 'player_id': "", 'message': "start", 'score':'0' };
-        log($(e.target).val());
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs
             $(e.target).val('Lancer la partie');
@@ -391,7 +374,6 @@ $(() => {
 
 
         }
-        log(msg);
         webSocket.send(JSON.stringify(msg));
     });
 
