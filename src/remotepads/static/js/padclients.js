@@ -275,7 +275,7 @@ webSocket.onmessage = function (e) {
 
                     if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
-                    quick_players[0].score += 1;
+                    // quick_players[0].score += 1;
                     quick_players[0].update();
                     $(`#${quick_players[0].number}_audio`)[0].play();
 
