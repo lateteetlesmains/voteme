@@ -122,24 +122,11 @@ class Display:
 
 
 if __name__ == '__main__':
-    d = Display(board.D18, 35)
-    d.draw(5, 125, Color.Turquoise)
-    print('turquoise')
-    sleep(2)
-    d.draw(5, 125, Color.BlueLavender)
-    print('lavender')
-    sleep(2)
-    d.draw(5, 125, Color.RedRuby)
-    print('ruby')
-    sleep(2)
-    d.draw(5, 125, Color.Red)
-    print('red')
-    sleep(2)
-    d.draw(5, 125, Color.PurpleDark)
-    print('purple dark')
-    sleep(2)
-    d.draw(5, 125, Color.Purple)
-    print('purple')
+    import os
+    print("Extinction des leds")
+    if os.getuid() != 0:
+        exit("Les privilèges root sont necessaires !")
+    Display(board.D18, 35).clear()
 
 
 # pixels.fill((0,255,0))
