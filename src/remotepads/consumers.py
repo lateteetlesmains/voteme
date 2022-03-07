@@ -39,6 +39,7 @@ class ScreensThread(Thread):
                 d.draw(1, 'p', Colors.Blue.color())
                 d.draw(5, len(pads), colors[len(pads) - 1].color())
             elif (len(pads) > 0):
+                d.clear()
                 d.draw(1, pads[self.currentPlayer].name,
                        pads[self.currentPlayer].color.color())
                 d.draw(5, pads[self.currentPlayer].score,
