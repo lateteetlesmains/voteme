@@ -25,6 +25,7 @@ class ScreensThread(Thread):
         Thread.__init__(self)
         self.stopped = event
         self.currentPlayer = 0
+        self.lastNbPlayers = -1
         self.daemon = True
         d.clear()
 
@@ -32,12 +33,16 @@ class ScreensThread(Thread):
         while not self.stopped.wait(2.0):
             if waiting and len(pads) == 0:
                 self.currentPlayer = 0
-                d.draw(2, '.', Colors.Purple.color())
-                d.draw(3, '.', Colors.Purple.color())
-                d.draw(4, '.', Colors.Purple.color())
+                if(self.lastNbPlayers == -1):
+                    d.draw(2, '.', Colors.Purple.color())
+                    d.draw(3, '.', Colors.Purple.color())
+                    d.draw(4, '.', Colors.Purple.color())
+                    self.lastNbPlayers = 0
             elif waiting:
-                d.draw(1, 'p', Colors.Blue.color())
-                d.draw(5, len(pads), colors[len(pads) - 1].color())
+                if(self.lastNbPlayers != len(pads)):
+                    d.draw(1, 'p', Colors.Blue.color())
+                    d.draw(5, len(pads), colors[len(pads) - 1].color())
+                    self.lastNbPlayers = len(pads)
             elif (len(pads) > 0):
                 d.clear()
                 d.draw(1, pads[self.currentPlayer].name,
@@ -120,6 +125,7 @@ class PadConsumer(AsyncWebsocketConsumer):
                 waiting = False
                 pads = []
                 d.clear()
+                thread.lastNbPlayers = -1
             elif incoming.message == "OK":
                 # on renvoie la bonne couleur au pad à qui on dit ok
                 for pad in pads:
@@ -134,7 +140,6 @@ class PadConsumer(AsyncWebsocketConsumer):
             pads.append(incoming)
             idx = pads.index(incoming)
             incoming.color = colors[idx]
-
             # print('idx in apprend : %d' % idx)
             pads[idx].name = 'p' + str((idx + 1))
 
