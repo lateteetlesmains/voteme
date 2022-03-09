@@ -21,16 +21,16 @@ colors = [
 
 
 class ScreensThread(Thread):
-    def __init__(self, event):
+    def __init__(self):
         Thread.__init__(self)
-        self.stopped = event
+        # self.stopped = event
         self.currentPlayer = 0
         self.lastNbPlayers = -1
         self.daemon = True
         d.clear()
 
     def run(self):
-        while not self.stopped.wait(2.0):
+        while True:
             if waiting and len(pads) == 0:
                 self.currentPlayer = 0
                 if(self.lastNbPlayers == -1):
@@ -46,16 +46,15 @@ class ScreensThread(Thread):
             elif (len(pads) > 0):
                 d.clear()
                 d.draw(1, pads[self.currentPlayer].name,
-                       pads[self.currentPlayer].color.color())
+                    pads[self.currentPlayer].color.color())
                 d.draw(5, pads[self.currentPlayer].score,
-                       pads[self.currentPlayer].color.color())
+                    pads[self.currentPlayer].color.color())
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads) - 1:
                     self.currentPlayer = 0
+                sleep(2)
 
-
-stopFlag = Event()
-thread = ScreensThread(stopFlag)
+thread = ScreensThread()
 thread.start()
 
 
