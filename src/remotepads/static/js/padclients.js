@@ -344,15 +344,27 @@ $(() => {
                 $(`#btn_buzzer_${player.number}_plus`).on('click', function (_e) {
                     player.score += 1;
                     player.update();
+                    msg.player_id = player.id;
+                    msg.score = player.score;
+                    msg.message = "score update";
+                    webSocket.send(JSON.stringify(msg));
 
                 });
                 $(`#btn_buzzer_${player.number}_minus`).on('click', function (_e) {
                     player.score -= 1;
                     player.update();
+                    msg.player_id = player.id;
+                    msg.score = player.score;
+                    msg.message = "score update";
+                    webSocket.send(JSON.stringify(msg));
                 });
                 $(`#btn_buzzer_${player.number}_reset`).on('click', function (_e) {
                     player.score = 0;
                     player.update();
+                    msg.player_id = player.id;
+                    msg.score = player.score;
+                    msg.message = "score update";
+                    webSocket.send(JSON.stringify(msg));
                 });
             });
             $(e.target).val("Réinitialiser");
@@ -381,6 +393,7 @@ $(() => {
 
 
         }
+
         webSocket.send(JSON.stringify(msg));
     });
 

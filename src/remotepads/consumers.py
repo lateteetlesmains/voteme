@@ -46,13 +46,15 @@ class ScreensThread(Thread):
             elif (len(pads) > 0):
                 d.clear()
                 d.draw(1, pads[self.currentPlayer].name,
-                    pads[self.currentPlayer].color.color())
+                       pads[self.currentPlayer].color.color())
                 d.draw(5, pads[self.currentPlayer].score,
-                    pads[self.currentPlayer].color.color())
+                       pads[self.currentPlayer].color.color())
                 self.currentPlayer += 1
                 if self.currentPlayer > len(pads) - 1:
                     self.currentPlayer = 0
-                sleep(2)
+                sleep(1.9)
+            sleep(.1)
+
 
 thread = ScreensThread()
 thread.start()
@@ -68,7 +70,7 @@ class Pad():
         self.color = Colors.Black
 
     def __repr__(self) -> str:
-        return self.name + '(' + self.id + ')' + " envoie : " + self.message + "color : " + str(self.color.color())
+        return F"{self.name} ({self.id} envoie : '{self.message}'\n Couleur : {str(self.color.color())}, score : {self.score}"
 
     def __eq__(self, __o: object) -> bool:
         return self.id == __o.id
@@ -117,6 +119,12 @@ class PadConsumer(AsyncWebsocketConsumer):
             elif incoming.message == 'new_quest':
                 self.ingame = True
                 waiting = False
+
+            elif incoming.message == 'score update':
+                for pad in pads:
+                    if incoming.playerid == pad.id:
+                        pads[pads.index(pad)].score = incoming.score
+                        break
 
             elif incoming.message == "reset":
                 self.started = False
