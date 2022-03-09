@@ -84,7 +84,7 @@ webSocket.onmessage = function (e) {
         if (waiting_players) {
             //On s'assure que c'est pas le même joueur qui s'inscrit
             let currentPlayer = players.find(elt => elt.id == data.id);
-            if(currentPlayer){
+            if (currentPlayer) {
                 //Si c'est le cas, on joue le son qui lui est associé
                 $(`#${currentPlayer.number}_audio`)[0].play();
                 return;
@@ -186,9 +186,6 @@ webSocket.onmessage = function (e) {
 
                     });
 
-                    // duplicates.forEach(duplicate => {
-                    //     players[players.indexOf(duplicate)].sameSound = true;
-                    // });
 
                     players.forEach(player => {
                         if (player.sameSound)
@@ -247,8 +244,6 @@ webSocket.onmessage = function (e) {
                         msg.score = player.score;
 
                         msg.player_id = player.id;
-                        // $('#player_' + player.number + '_score').text(player.score +
-                        //     (player.score > 1 ? " Points" : " Point"));
                     }
 
                     else {
@@ -266,20 +261,16 @@ webSocket.onmessage = function (e) {
 
                     if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
                         $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
-                    // quick_players[0].score += 1;
-                    quick_players[0].update();
-                    $(`#${quick_players[0].number}_audio`)[0].play();
 
-                    // let msg = { "id": "admin", "player_id": quick_players[0].id, "message": "faster", "score": quick_players[0].score };
+                    quick_players[0].update();
+                    if (player.id == quick_players[0].id)
+                        $(`#${quick_players[0].number}_audio`)[0].play();
+
                     msg.player_id = quick_players[0].id;
                     msg.score = quick_players[0].score
                     msg.message = 'faster';
                     msg.id = 'admin';
                     webSocket.send(JSON.stringify(msg));
-                    // $('#player_' + player.number + '_score').text(player.score +
-                    //     player.score > 1 ? " Points" : " Point");
-
-
 
                 }
                 player.has_answered = true;
@@ -305,7 +296,6 @@ webSocket.onclose = function (_e) {
 };
 
 
-
 $(() => {
 
     $('#question_type_form').on('change', function (e) {
@@ -320,7 +310,7 @@ $(() => {
     })
 
     $('#start_btn').on('click', function (e) {
-        // message = { 'id': 'admin', 'player_id': "", 'message': "start", 'score':'0' };
+
         if ($(e.target).val() == "Démarrer") {
             //Attente des joueurs
             $(e.target).val('Lancer la partie');
@@ -405,7 +395,6 @@ $(() => {
             elt.has_answered = false;
         });
         quick_players = []
-        // let msg = { "id": "admin", "player_id": "", "message": "game", 'score':'0' };
         msg.id = "admin";
         msg.player_id = '';
         msg.message = '';
