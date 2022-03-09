@@ -342,6 +342,8 @@ $(() => {
                 });
                 $(`#btn_buzzer_${player.number}_minus`).on('click', function (_e) {
                     player.score -= 1;
+                    if(player.score < 0)
+                        player.score = 0;
                     player.update();
                     msg.player_id = player.id;
                     msg.score = player.score;
