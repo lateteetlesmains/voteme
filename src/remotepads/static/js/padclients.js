@@ -84,11 +84,11 @@ webSocket.onmessage = function (e) {
         if (waiting_players) {
             //On s'assure que c'est pas le même joueur qui s'inscrit
             let currentPlayer = players.find(elt => elt.id == data.id);
-            // if (currentPlayer) {
-            //     //Si c'est le cas, on joue le son qui lui est associé
-            //     $(`#${currentPlayer.number}_audio`)[0].play();
-            //     return;
-            // }
+            if (currentPlayer) {
+                //Si c'est le cas, on joue le son qui lui est associé
+                $(`#${currentPlayer.number}_audio`)[0].play();
+                return;
+            }
 
             $('#waiting_players').addClass('hidden');
             $('#players_container').removeClass('hidden');
