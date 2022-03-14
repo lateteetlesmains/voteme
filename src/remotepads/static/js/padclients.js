@@ -84,11 +84,11 @@ webSocket.onmessage = function (e) {
         if (waiting_players) {
             //On s'assure que c'est pas le même joueur qui s'inscrit
             let currentPlayer = players.find(elt => elt.id == data.id);
-            if (currentPlayer) {
-                //Si c'est le cas, on joue le son qui lui est associé
-                $(`#${currentPlayer.number}_audio`)[0].play();
-                return;
-            }
+            // if (currentPlayer) {
+            //     //Si c'est le cas, on joue le son qui lui est associé
+            //     $(`#${currentPlayer.number}_audio`)[0].play();
+            //     return;
+            // }
 
             $('#waiting_players').addClass('hidden');
             $('#players_container').removeClass('hidden');
@@ -106,45 +106,54 @@ webSocket.onmessage = function (e) {
 
             $('#players_container').append(`
             
-            <div class='box-Buzzer' id='box_Buzzer_${incomingPlayer.number}'>
+            <div class='box_buzzer' id='box_buzzer_${incomingPlayer.number}'>
                
-                    <div class="player_name_score_container">
+                    <div class="player_name_audio_container">
                         <div class='player_name'>
-                            <h2>Joueur ${incomingPlayer.number}</h2>
                             <div class="player_color" id=player_${incomingPlayer.number}_color></div>
+                            <h2>Joueur ${incomingPlayer.number}</h2>
+                            
                         </div>
-                        <div class='score_container'>
-                            <div>
-                                <label class='score' >SCORE : </label>
-                                <label id='player_${incomingPlayer.number}_score' class='score' >${incomingPlayer.score} Point</label>  
+                        <div class='audio_container'>
+                            <audio id=${incomingPlayer.number}_audio src=" ${incomingPlayer.sound.path}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        <div class="drop_sound_and_button_container">
+                        
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle sound_list_drop" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ${incomingPlayer.sound.soundName}
+                                </button>
+                                <div id="sound_drop_${incomingPlayer.number}" class="dropdown-menu" aria-labelledby="dropdownMenuButtonSound">
+                                    <!-- <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a> -->
+                                </div>
                             </div>
-                                           
+                            <div>
+                                <button title="Jouer le son" class="btn btn-primary btn_play" id="${incomingPlayer.number}_play"><i class="fa-solid fa-play"></i></button>
+                            </div>
+                        
+                        </div>
+ 
+                     
+                    </div>
+                    <div class='score_container'>
+                        <div>
+                            <label class='score' >SCORE : </label>
+                            <label id='player_${incomingPlayer.number}_score' class='score' >${incomingPlayer.score} Point</label>  
+                        </div>
+                        <div class="score_btn_container" >
+
                             <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_minus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_+' value='-1'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>
+                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro' title="Remise à zéro">
+                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>            
+                        
                         </div>
+                      
+               
                     </div>
-                                      
-                <div class='audio_container'>
-                    <audio id=${incomingPlayer.number}_audio src=" ${incomingPlayer.sound.path}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                    </audio>
-                    
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle sound_list_drop" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            ${incomingPlayer.sound.soundName}
-                        </button>
-                        <div id="sound_drop_${incomingPlayer.number}" class="dropdown-menu" aria-labelledby="dropdownMenuButtonSound">
-                            <!-- <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a> -->
-                        </div>
-                    </div>
-                    <div>
-                        <button title="Jouer le son" class="btn btn-primary btn_play" id="${incomingPlayer.number}_play"><i class="fa-solid fa-play"></i></button>
-                    </div>
-                 
-                </div>
                 
             </div>
 
@@ -237,7 +246,7 @@ webSocket.onmessage = function (e) {
                     player.answer = new ExpectedAnswer(data.message);
                     msg.id = 'admin';
                     if (player.answer.answer == expected_answer.answer) {
-                        $(`#box_Buzzer_${player.number}`).addClass('good_answer');
+                        $(`#box_buzzer_${player.number}`).addClass('good_answer');
                         player.score += 1;
                         player.update();
                         msg.message = "good";
@@ -247,7 +256,7 @@ webSocket.onmessage = function (e) {
                     }
 
                     else {
-                        $(`#box_Buzzer_${player.number}`).addClass('bad_answer');
+                        $(`#box_buzzer_${player.number}`).addClass('bad_answer');
                         msg.message = "bad";
                         msg.player_id = player.id;
                     }
@@ -259,8 +268,8 @@ webSocket.onmessage = function (e) {
                     quick_players.push(player);
                     player.rank = quick_players.indexOf(player);
 
-                    if (!$(`#box_Buzzer_${quick_players[0].number}`).hasClass('good_answer'))
-                        $(`#box_Buzzer_${quick_players[0].number}`).addClass('good_answer');
+                    if (!$(`#box_buzzer_${quick_players[0].number}`).hasClass('good_answer'))
+                        $(`#box_buzzer_${quick_players[0].number}`).addClass('good_answer');
 
                     quick_players[0].update();
                     if (player.id == quick_players[0].id)
@@ -297,7 +306,18 @@ webSocket.onclose = function (_e) {
 
 
 $(() => {
-
+    $('#top_button').on('click', function(){
+        $(document).scrollTop(0);
+    });
+    $(window).on('scroll', function(){
+        
+        if($(document).scrollTop() > 75){
+            $("#top_button").removeClass('hidden');
+        }
+        else{
+            $('#top_button').addClass('hidden');
+        }
+    });
     $('#question_type_form').on('change', function (e) {
         currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
         if (currentGameMode == GameModes.Quick)
@@ -324,6 +344,7 @@ $(() => {
 
             waiting_players = true;
             gameStarted = false;
+            $('#question_modal').modal(show=true);
         }
 
         else if ($(e.target).val() == 'Lancer la partie') {
@@ -391,9 +412,9 @@ $(() => {
 
     $('#new_question_btn').click(function (_e) {
         players.forEach(elt => {
-            $(`#box_Buzzer_${elt.number}`).hasClass('good_answer') ?
-                $(`#box_Buzzer_${elt.number}`).removeClass('good_answer') :
-                $(`#box_Buzzer_${elt.number}`).removeClass('bad_answer');
+            $(`#box_buzzer_${elt.number}`).hasClass('good_answer') ?
+                $(`#box_buzzer_${elt.number}`).removeClass('good_answer') :
+                $(`#box_buzzer_${elt.number}`).removeClass('bad_answer');
             elt.has_answered = false;
         });
         quick_players = []
@@ -401,6 +422,7 @@ $(() => {
         msg.player_id = '';
         msg.message = '';
         msg.message = 'new_quest';
+        $('#question_modal').modal(show=true, 'handleUpdate');
         webSocket.send(JSON.stringify(msg));
     });
 

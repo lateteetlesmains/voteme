@@ -17,30 +17,29 @@
     <title>Pads Clients</title>
   </head>
 
-  <body>
-    <header class="container-fluid">
+  <body >
+    <header class="nav justify-content-center position-sticky">
       <div>
         <h2>Buzzi WIFI Multigame</h2>
       </div>
     </header>
-    <main>
-
-        <div id="start_text" class="center_text">Cliquez ici pour attendre les joueurs.</div>
-        <div class="hidden center_text container" id="waiting_players">
-          <div class="loader"></div>
-          <div id="loader_text">Attente des joueurs ...</div>
-        </div>
-
-
-
-        <div id="btn_start_container" class="center_text container">
-            <form class="form hidden" id="question_type_form">
+    <div class="modal fade" tabindex="-1" id="question_modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Définition de la question</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form" id="question_type_form">
               <div class="form-group">
                 <div>
                   <label class="smaller-text">Type de question : </label>
                 </div>
                 
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
                   <label class="medium-text btn btn-info active">
                     <input
                       type="radio"
@@ -62,44 +61,73 @@
                   </label>
                 </div>
               </div>
-            </form>
+          </form>
 
+          <form class="form" id="answer_form">
+            <div class="form-group">
+              <div>
+                  <label class="smaller-text">Réponse attendue : </label>
+              </div>
+              
+              <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
+                <label class="medium-text btn btn-info active">
+                  <input type="radio" name="options" id="a" autocomplete="off" />
+                  A
+                </label>
+                <label class="medium-text btn btn-info">
+                  <input type="radio" name="options" id="b" autocomplete="off" />
+                  B
+                </label>
+                <label class="medium-text btn btn-info">
+                  <input type="radio" name="options" id="c" autocomplete="off" />
+                  C
+                </label>
+                <label class="medium-text btn btn-info">
+                  <input type="radio" name="options" id="d" autocomplete="off" />
+                  D
+                </label>
+              </div>
+            </div>
+        </form>
+      
+      
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <main >
+        <span id="top"></span>
+        <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
+
+        <div id="btn_start_container" class="center_text container-fluid">
             <input type="button" id="start_btn" class="btn btn-primary start_reset" value="Démarrer"></input>
             <input type="button" id="new_question_btn" class="btn btn-primary hidden ingame start_reset" value="Nouvelle question"></input>
-
-            <form class="form hidden" id="answer_form">
-              <div class="form-group">
-                <div>
-                    <label class="smaller-text">Réponse attendue : </label>
-                </div>
-                
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                  <label class="medium-text btn btn-info active">
-                    <input type="radio" name="options" id="a" autocomplete="off" />
-                    A
-                  </label>
-                  <label class="medium-text btn btn-info">
-                    <input type="radio" name="options" id="b" autocomplete="off" />
-                    B
-                  </label>
-                  <label class="medium-text btn btn-info">
-                    <input type="radio" name="options" id="c" autocomplete="off" />
-                    C
-                  </label>
-                  <label class="medium-text btn btn-info">
-                    <input type="radio" name="options" id="d" autocomplete="off" />
-                    D
-                  </label>
-                </div>
-              </div>
-            </form>
         </div>
-        
+        <div class="hidden center_text container" id="waiting_players">
+          <div class="loader"></div>
+          <div id="loader_text">Attente des joueurs ...</div>
+        </div>
+
+
+        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
+          Launch demo modal
+        </button> -->
 
 
       <div id="players_container" class="hidden container">
-       
+
       </div>
+      <button id="top_button" class="btn btn-primary fixed-bottom hidden">
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+      
     </main>
+    <footer>
+
+    </footer>
   </body>
 </html>

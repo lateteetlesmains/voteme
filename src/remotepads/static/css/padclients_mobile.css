@@ -1,5 +1,14 @@
-@media (max-width: 360px) { 
-    header{
-        width: 10px;
+@media (max-width: 625px) { 
+    .box_buzzer{
+        width: inherit;
+    }
+    .player_name_audio_container{
+        flex-direction: column;
+    }
+    .drop_sound_and_button_container {
+        justify-content: flex-end;
+    }
+    .score_btn_container{
+        justify-content: center;
     }
  }
