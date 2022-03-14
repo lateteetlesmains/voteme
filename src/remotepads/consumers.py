@@ -3,6 +3,7 @@ from time import sleep
 from channels.generic.websocket import AsyncWebsocketConsumer
 from threading import Thread, Event
 import json
+from dataclasses import dataclass
 
 waiting = False
 
@@ -21,6 +22,7 @@ colors = [
 
 
 class ScreensThread(Thread):
+
     def __init__(self):
         Thread.__init__(self)
         # self.stopped = event
@@ -60,27 +62,34 @@ thread = ScreensThread()
 thread.start()
 
 
-class Pad():
-    def __init__(self, id, message) -> None:
-        self.id = id
-        self.name = ""
-        self.message = message
+@dataclass
+class Pad:
+    id: int
+    message: str
+
+    # def __init__(self, id, message) -> None:
+    #     self.id = id
+    #     self.message = message
+
+    def __post_init__(self):
         self.playerid = ""
+        self.name = ""
         self.score = 0
         self.color = Colors.Black
 
-    def __repr__(self) -> str:
-        return F"{self.name} ({self.id} envoie : '{self.message}'\n Couleur : {str(self.color.color())}, score : {self.score}"
+    # def __repr__(self) -> str:
+    #     return F"{self.name} ({self.id} envoie : '{self.message}'\n Couleur : {str(self.color.color())}, score : {self.score}"
 
     def __eq__(self, __o: object) -> bool:
         return self.id == __o.id
 
 
+@dataclass
 class PadConsumer(AsyncWebsocketConsumer):
-    def __init__(self, *args, **kwargs):
+    def __post_init__(self):
         self.started = False
         self.ingame = False
-        super().__init__(*args, **kwargs)
+        super().__init__()
 
     async def connect(self):
         self.group_name = 'pads'
@@ -150,7 +159,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             # print('idx in apprend : %d' % idx)
             pads[idx].name = f'p{str(idx + 1)}'
 
-                # print(incoming.color.color())
+            # print(incoming.color.color())
 
         if self.ingame and incoming.message in ['good', 'faster']:
             for pad in pads:
