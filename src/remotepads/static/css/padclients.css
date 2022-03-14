@@ -93,8 +93,7 @@ body {
 }
 
 .start_reset {
-    margin-left: .6rem;
-    margin-right: .6rem;
+margin: .6rem;
 }
 
 .forms_container {
@@ -191,7 +190,9 @@ body {
 .drop_sound_and_button_container {
     display: flex;
 }
-
+.sound_list_drop{
+    min-width: 120px;
+}
 .same_sound {
     color: red;
 }
