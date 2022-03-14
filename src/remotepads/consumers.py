@@ -142,22 +142,21 @@ class PadConsumer(AsyncWebsocketConsumer):
                 # idx = pads.index(
                 #     next((pad for pad in pads if pad.id == incoming.playerid), None))
 
-        elif not incoming in pads:
+        elif incoming not in pads:
             # on définit les valeurs des pads entrant apres "press"
             pads.append(incoming)
             idx = pads.index(incoming)
             incoming.color = colors[idx]
             # print('idx in apprend : %d' % idx)
-            pads[idx].name = 'p' + str((idx + 1))
+            pads[idx].name = f'p{str(idx + 1)}'
 
-            # print(incoming.color.color())
+                # print(incoming.color.color())
 
-        if self.ingame:
-            if incoming.message == 'good' or incoming.message == 'faster':
-                for pad in pads:
-                    if pad.id == incoming.playerid:
-                        pad.score = incoming.score
-                        break
+        if self.ingame and incoming.message in ['good', 'faster']:
+            for pad in pads:
+                if pad.id == incoming.playerid:
+                    pad.score = incoming.score
+                    break
         # print('idx before send : %d' % idx)
         # print(text_data_json)
         await self.channel_layer.group_send(
@@ -176,17 +175,17 @@ class PadConsumer(AsyncWebsocketConsumer):
         )
 
     async def pad_message(self, event):
-        message = event['message']
-        player_id = event['player_id']
-        score = event['score']
-        id = event['id']
 
-        await self.send(text_data=json.dumps({
-            'message': event['message'],
-            'id': event['id'],
-            'player_id': event['player_id'],
-            'score':  event['score'],
-            'color_r': event['color_r'],
-            'color_g': event['color_g'],
-            'color_b': event['color_b']
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    'message': event['message'],
+                    'id': event['id'],
+                    'player_id': event['player_id'],
+                    'score': event['score'],
+                    'color_r': event['color_r'],
+                    'color_g': event['color_g'],
+                    'color_b': event['color_b'],
+                }
+            )
+        )
