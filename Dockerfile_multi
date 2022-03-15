@@ -1,10 +1,9 @@
-FROM python:3.7-buster
+FROM python:3.7-buster as build
 
 #Pour windows
 #RUN apt-get update && apt-get install nginx -y --no-install-recommends
 #pour linux (RaspberryPi)
-COPY src /opt/app/voteme/
-COPY server-start.sh /opt/app
+COPY server-start.sh /opt/app/
 COPY requirements.txt /opt/app/
 
 RUN apt-get update \
@@ -18,7 +17,11 @@ RUN apt-get update \
 	&& python -m pip install uvicorn['standard']
 
 COPY nginx.default /etc/nginx/sites-available/default
-WORKDIR /opt/app/voteme
+#WORKDIR /opt/app/
+
+COPY src /opt/app/voteme/
+
+COPY --from=build /app/voteme /
 
 EXPOSE 8080
 # COPY . ${APP_WORKDIR}
