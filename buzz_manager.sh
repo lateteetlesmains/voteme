@@ -164,13 +164,12 @@ function set_dhcp(){
         cp /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
     fi
     echo "
-interface=wlan0 
-listen-address=192.168.4.1
-bind-interfaces 
-server=8.8.8.8
-domain-needed
-bogus-priv
-dhcp-range=192.168.4.2,192.168.4.30,24h">/etc/dnsmasq.conf
+interface=wlan0 # Listening interface
+dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+                # Pool of IP addresses served via DHCP
+domain=wlan     # Local wireless DNS domain
+address=/gw.wlan/192.168.4.1
+                # Alias for this router">/etc/dnsmasq.conf
 }
 
 function set_ap(){
