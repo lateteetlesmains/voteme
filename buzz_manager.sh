@@ -114,7 +114,7 @@ function post_install() {
 function get_source_code() {
     if [[ ! -d /home/pi/Documents/voteme ]]; then
         echo "Récupération du code source serveur sur github"
-        git clone https://github.com/adl1422/voteme
+        git clone https://github.com/adl1422/voteme /home/pi/Documents
     else
         echo "Code source présent"
     fi
@@ -134,14 +134,12 @@ function build_local() {
 
 function install_wifi_prerequisites(){
     echo "Installation des outils necessaires pour l'access point wifi"
-    apt install hostapd dnsmasq bridge-utils -y --no-install-recommends
+    apt install hostapd dnsmasq -y --no-install-recommends
     echo "Arrêt des services le temps de la configuration"
-    systemctl stop hostapd
-    systemctl stop dnsmasq
+    # systemctl stop dnsmasq
 }
 
 function enable_wifi_services(){
-    systemctl enable hostapd
     systemctl enable dnsmasq
 }
 
@@ -152,13 +150,7 @@ function set_fixed_ip(){
         echo "Sauvegarde du fichier de conf initial"
         cp /etc/dhcpcd.conf /etc/dhcpcd.conf.orig
     fi
-    echo "
-interface wlan0
-nohook wpa_supplicant
-static ip_address=192.168.4.1/24
-denyinterfaces eth0
-denyinterfaces wlan0
-    ">/etc/dhcpcd.conf
+    echo "denyinterfaces wlan0">/etc/dhcpcd.conf
 }
 
 function set_dhcp(){
@@ -168,29 +160,33 @@ function set_dhcp(){
         cp /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
     fi
     echo "
-interface=wlan0
-dhcp-range=192.168.4.2,192.168.4.30,255.255.255.0,24h
-    ">/etc/dnsmasq.conf
+interface=wlan0 
+listen-address=192.168.4.1
+bind-interfaces 
+server=8.8.8.8
+domain-needed
+bogus-priv
+dhcp-range=192.168.4.2,192.168.4.30,24h">/etc/dnsmasq.conf
 }
 
 function set_ap(){
     echo "Ecriture des informations de config pour l'AP"
     echo "
 interface=wlan0
-bridge=br0
+driver=nl80211
+ssid=Buzz
 hw_mode=g
-channel=7
-wmm_enabled=0
+channel=6
+ieee80211n=1
+wmm_enabled=1
+ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 wpa=2
 wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-ssid=Buzz
-wpa_passphrase=Buzz2022
-    ">/etc/hostapd/hostapd.conf
+wpa_passphrase=password
+rsn_pairwise=CCMP">/etc/hostapd/hostapd.conf
 }
 
 function set_hostapd_file_conf(){
@@ -212,6 +208,8 @@ function set_traffic_forwarding(){
 function set_firewall_rules(){
     echo "definition du nat pour router le traffic vers eth0"
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
     echo "Sauvegarde de la configuration vers un fichier"
     sh -c "iptables-save > /etc/iptables.ipv4.nat"
     if [[ ! -f /etc/rc.local.orig ]]; then
@@ -239,15 +237,23 @@ function enable_bridge_iface(){
         cp /etc/network/interfaces /etc/network/interfaces.orig
     fi
     # On crée l'interface br0
-    brctl addbr br0
+    # brctl addbr br0
     # on connecte eth0 à br0
-    brctl addif br0 eth0
+    # brctl addif br0 eth0
     #on renseigne le fichier interface avec la nouvelle interface br0
     echo "
-auto br0
-iface br0 inet manual
-bridge_ports eth0 wlan0
-    ">>/etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+allow-hotplug wlan0
+iface wlan0 inet static
+    address 192.168.4.1
+    netmask 255.255.255.0
+    network 192.168.4.0
+    broadcast 192.168.4.255">>/etc/network/interfaces
     
 }
 
@@ -257,25 +263,23 @@ function wifiap(){
     set_dhcp
     set_ap
     set_hostapd_file_conf
-    # set_traffic_forwarding
-    # set_firewall_rules
+    set_traffic_forwarding
+    set_firewall_rules
     enable_bridge_iface
-    
+    /bin/echo "Redémarrage"
+    reboot    
 }
 
 function restore_wifi(){
-    systemctl stop hostapd
-    systemctl stop dnsmasq
-    brctl delif br0 eth0
-    brctl delbr br0
+
     cp /etc/network/interfaces.orig /etc/network/interfaces
     cp /etc/rc.local.orig /etc/rc.local
     cp /etc/sysctl.conf.orig /etc/sysctl.conf
     cp /etc/default/hostapd.orig /etc/default/hostapd
     cp /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
-    apt remove hostapd dnsmasq bridge-utils
-    systemctl disable hostapd
-    systemctl disable dnsmasq
+    apt remove hostapd dnsmasq -y
+    echo "Redémarrage"
+    reboot
     
 }
 
@@ -343,7 +347,23 @@ case "$1" in
     ;;
     
     *)
-        echo "utilisation : "
+        echo "utilisation : 
+        buzz_manager [options]
+            start : Installe docker et tous les composants necessaires (inclus le code source dans /home/pi/Documents )
+            puis ajoute l'utilisateur pi au groupe docker (requière sudo)
+
+            remote : Télécharge et lance le conteneur docker avec l'image présente sur docker hub (pas de sudo)
+
+            local : Créer l'image en local depuis les fichiers du code source, cela prend du temps ! (pas de sudo)
+
+            setap: Définit le pi comme un point d'acces. SSID = Buzz, pass = password 
+                NB: La connexion est perdue pendant le processus, le pi redemarre tout seul, puis on peut se connecter à l'AP
+
+            restorewifi : Rétabli les paramètres wifi avant setap.
+                NB: Comme pour la précédante, cette commande perd la connexion, le reboot est automatique.
+                
+            clear : Désinstalle docker et ses composants
+        "
         
     ;;
 esac
