@@ -178,19 +178,16 @@ function set_ap(){
     echo "
 country_code=FR
 interface=wlan0
-driver=nl80211
-ssid=Buzz
+ssid=NameOfNetwork
 hw_mode=g
-channel=6
-ieee80211n=1
-wmm_enabled=1
-ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]
+channel=7
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 wpa=2
+wpa_passphrase=AardvarkBadgerHedgehog
 wpa_key_mgmt=WPA-PSK
-wpa_passphrase=password
+wpa_pairwise=TKIP
 rsn_pairwise=CCMP">/etc/hostapd/hostapd.conf
 }
 
