@@ -136,7 +136,8 @@ function install_wifi_prerequisites(){
     echo "Installation des outils necessaires pour l'access point wifi"
     apt install hostapd dnsmasq -y --no-install-recommends
     echo "Arrêt des services le temps de la configuration"
-    # systemctl stop dnsmasq
+    systemctl unmask hostapd
+    systemctl enable hostapd
 }
 
 function enable_wifi_services(){
@@ -150,7 +151,10 @@ function set_fixed_ip(){
         echo "Sauvegarde du fichier de conf initial"
         cp /etc/dhcpcd.conf /etc/dhcpcd.conf.orig
     fi
-    echo "denyinterfaces wlan0">/etc/dhcpcd.conf
+    echo "
+interface wlan0
+static ip_address=192.168.4.1/24
+nohook wpa_supplicant">/etc/dhcpcd.conf
 }
 
 function set_dhcp(){
@@ -172,6 +176,7 @@ dhcp-range=192.168.4.2,192.168.4.30,24h">/etc/dnsmasq.conf
 function set_ap(){
     echo "Ecriture des informations de config pour l'AP"
     echo "
+country_code=FR
 interface=wlan0
 driver=nl80211
 ssid=Buzz
@@ -265,7 +270,7 @@ function wifiap(){
     set_hostapd_file_conf
     set_traffic_forwarding
     set_firewall_rules
-    enable_bridge_iface
+    # enable_bridge_iface
     /bin/echo "Redémarrage"
     reboot    
 }
