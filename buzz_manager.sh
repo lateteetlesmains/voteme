@@ -138,6 +138,8 @@ function install_wifi_prerequisites(){
     echo "Arrêt des services le temps de la configuration"
     systemctl unmask hostapd
     systemctl enable hostapd
+    systemctl unmask dnsmasq
+    systemctl enable dnsmasq
 }
 
 function enable_wifi_services(){
@@ -177,14 +179,14 @@ function set_ap(){
     echo "
 country_code=FR
 interface=wlan0
-ssid=NameOfNetwork
+ssid=Buzz
 hw_mode=g
 channel=7
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 wpa=2
-wpa_passphrase=AardvarkBadgerHedgehog
+wpa_passphrase=password
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP">/etc/hostapd/hostapd.conf
