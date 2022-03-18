@@ -181,7 +181,7 @@ country_code=FR
 interface=wlan0
 ssid=Buzz
 hw_mode=g
-channel=7
+channel=3
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
@@ -235,31 +235,6 @@ function set_firewall_rules(){
     
 }
 
-function enable_bridge_iface(){
-    if [[ ! -f /etc/network/interfaces.orig ]]; then
-        cp /etc/network/interfaces /etc/network/interfaces.orig
-    fi
-    # On crée l'interface br0
-    # brctl addbr br0
-    # on connecte eth0 à br0
-    # brctl addif br0 eth0
-    #on renseigne le fichier interface avec la nouvelle interface br0
-    echo "
-auto lo
-iface lo inet loopback
-
-auto eth0
-iface eth0 inet dhcp
-
-allow-hotplug wlan0
-iface wlan0 inet static
-    address 192.168.4.1
-    netmask 255.255.255.0
-    network 192.168.4.0
-    broadcast 192.168.4.255">>/etc/network/interfaces
-    
-}
-
 function wifiap(){
     install_wifi_prerequisites
     set_fixed_ip
@@ -268,7 +243,6 @@ function wifiap(){
     set_hostapd_file_conf
     set_traffic_forwarding
     set_firewall_rules
-    # enable_bridge_iface
     /bin/echo "Redémarrage"
     reboot    
 }
