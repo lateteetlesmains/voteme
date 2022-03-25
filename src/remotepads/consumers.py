@@ -110,7 +110,7 @@ class PadConsumer(AsyncWebsocketConsumer):
         global pads, waiting
         idx = 0
         text_data_json = json.loads(text_data)
-        # print(text_data_json)
+        print(text_data_json)
         incoming = Pad(text_data_json['id'], text_data_json['message'])
         incoming.score = text_data_json['score']
         incoming.playerid = text_data_json['player_id']
@@ -172,6 +172,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             self.group_name,
             {
                 'type': 'pad_message',
+                'game_mode': text_data_json['game_mode'],
                 'message': text_data_json['message'],
                 'id': text_data_json['id'],
                 'player_id': text_data_json['player_id'],
@@ -189,6 +190,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             text_data=json.dumps(
                 {
                     'message': event['message'],
+                    'game_mode': event['game_mode'],
                     'id': event['id'],
                     'player_id': event['player_id'],
                     'score': event['score'],

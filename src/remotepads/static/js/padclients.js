@@ -11,7 +11,7 @@ var soundPaths = [
     { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
 ]
 
-let msg = { "id": "admin", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
+let msg = { "id": "admin", "game_mode": '', "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
 const webSocket = new WebSocket(
     'ws://'
@@ -24,7 +24,7 @@ class Player {
     constructor(id, rank) {
         this.id = id;
         this.number = -1;
-        this.answer;
+        this.answer = [];
         this.has_answered = false;
         this.rank = rank;
         this.score = 0;
@@ -50,20 +50,19 @@ class GameModes {
     }
 }
 
-class ExpectedAnswer {
-    static A = new ExpectedAnswer("a");
-    static B = new ExpectedAnswer("b");
-    static C = new ExpectedAnswer("c");
-    static D = new ExpectedAnswer("d");
+// class ExpectedAnswers {
+//     static A = new ExpectedAnswer("a");
+//     static B = new ExpectedAnswer("b");
+//     static C = new ExpectedAnswer("c");
+//     static D = new ExpectedAnswer("d");
 
-    constructor(answer) {
-        this.answer = answer;
-    }
-}
+//     constructor(answer) {
+//         this.answer = answer;
+//     }
+// }
 
-
+var expectedAnswers = [];
 var currentGameMode = GameModes.QCM;
-var expected_answer = ExpectedAnswer.A
 var players = [];
 var quick_players = [];
 var soundList = []
@@ -76,6 +75,7 @@ function getSoundIndex(currentindex) {
         return getSoundIndex((currentindex + 1) % soundPaths.length);
     }
 }
+
 
 webSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
@@ -240,28 +240,61 @@ webSocket.onmessage = function (e) {
             if (player == undefined)
                 return; //Si le joueur n'est pas en lice on ignore
 
-            if (!player.has_answered) {
+            if (!player.answer.includes(data.message)) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
-                    player.answer = new ExpectedAnswer(data.message);
+                    // log(data.message)
+                    player.answer.push(data.message);
+                    // log(player.answer)
                     msg.id = 'admin';
-                    if (player.answer.answer == expected_answer.answer) {
-                        $(`#box_buzzer_${player.number}`).addClass('good_answer');
-                        player.score += 1;
-                        player.update();
-                        msg.message = "good";
-                        msg.score = player.score;
+                    msg.player_id = player.id;
+                    if (expectedAnswers.length == 1 && !player.has_answered) {
 
-                        msg.player_id = player.id;
+                        if (player.answer[0] == expectedAnswers[0]) {
+                            $(`#box_buzzer_${player.number}`).addClass('good_answer');
+                            player.score += 1;
+                            player.update();
+                            msg.message = "good";
+                            msg.score = player.score;
+
+
+                        }
+
+                        else {
+                            $(`#box_buzzer_${player.number}`).addClass('bad_answer');
+                            msg.message = "bad";
+                        }
+                        player.has_answered = true;
+
+
                     }
+                    else if (expectedAnswers.length > 1) {
+                        if (player.answer.length < expectedAnswers.length) {
+                            msg.message = "then";
+                        }
+                        else {
+                            let goodanswers = expectedAnswers.filter(answer => player.answer.includes(answer));
+                            log(goodanswers);
+                            player.score += goodanswers.length;
+                            player.update();
+                            
+                            if (goodanswers.length == expectedAnswers.length) {
+                                msg.message = "good";
 
-                    else {
-                        $(`#box_buzzer_${player.number}`).addClass('bad_answer');
-                        msg.message = "bad";
-                        msg.player_id = player.id;
+                                $(`#box_buzzer_${player.number}`).addClass('good_answer');
+                            }
+                            else if (goodanswers.length > 0 && goodanswers.length < expectedAnswers.length) {
+                                msg.message = "partial";
+                                $(`#box_buzzer_${player.number}`).addClass('partial_answer');
+                            }
+                            else if (goodanswers.length == 0) {
+                                msg.message = "bad";
+                                $(`#box_buzzer_${player.number}`).addClass('bad_answer');
+                            }
+                            player.has_answered = true;
+                        }
                     }
                     webSocket.send(JSON.stringify(msg));
-
 
                 }
                 else {
@@ -306,28 +339,38 @@ webSocket.onclose = function (_e) {
 
 
 $(() => {
-    $('#top_button').on('click', function(){
+    $('#top_button').on('click', function () {
         $(document).scrollTop(0);
     });
-    $(window).on('scroll', function(){
-        
-        if($(document).scrollTop() > 75){
+    $(window).on('scroll', function () {
+
+        if ($(document).scrollTop() > 75) {
             $("#top_button").removeClass('hidden');
         }
-        else{
+        else {
             $('#top_button').addClass('hidden');
         }
     });
     $('#question_type_form').on('change', function (e) {
         currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
+        msg.game_mode = currentGameMode == GameModes.QCM ? "QCM" : "quick";
         if (currentGameMode == GameModes.Quick)
             $('#answer_form').addClass('hide');
         else
             $('#answer_form').removeClass('hide');
     });
     $('#answer_form').on('change', function (e) {
-        expected_answer = new ExpectedAnswer(e.target.id);
+        // expected_answer = new ExpectedAnswer(e.target.id);
+
+        if (!$(e.target).parent().hasClass('active'))
+            expectedAnswers.push(e.target.id)
+        else
+            expectedAnswers.splice(expectedAnswers.indexOf(e.target.id), 1)
+
     })
+
+
+
 
     $('#start_btn').on('click', function (e) {
 
@@ -344,11 +387,12 @@ $(() => {
 
             waiting_players = true;
             gameStarted = false;
-            $('#question_modal').modal(show=true);
+            $('#question_modal').modal({ show: true, keyboard: false, backdrop: 'static' });
         }
 
         else if ($(e.target).val() == 'Lancer la partie') {
             //lancement de partie
+            msg.game_mode = currentGameMode == GameModes.QCM ? "QCM" : "quick";
             if (players.length < 1)
                 return;
             players.forEach(player => {
@@ -363,7 +407,7 @@ $(() => {
                 });
                 $(`#btn_buzzer_${player.number}_minus`).on('click', function (_e) {
                     player.score -= 1;
-                    if(player.score < 0)
+                    if (player.score < 0)
                         player.score = 0;
                     player.update();
                     msg.player_id = player.id;
@@ -415,14 +459,18 @@ $(() => {
             $(`#box_buzzer_${elt.number}`).hasClass('good_answer') ?
                 $(`#box_buzzer_${elt.number}`).removeClass('good_answer') :
                 $(`#box_buzzer_${elt.number}`).removeClass('bad_answer');
+            $(`#box_buzzer_${elt.number}`).removeClass('partial_answer');
             elt.has_answered = false;
+            elt.answer = [];
         });
-        quick_players = []
+        quick_players = [];
         msg.id = "admin";
+
         msg.player_id = '';
         msg.message = '';
         msg.message = 'new_quest';
-        $('#question_modal').modal(show=true, 'handleUpdate');
+        $('#question_modal').modal({ show: true, keyboard: false, backdrop: 'static' });
+
         webSocket.send(JSON.stringify(msg));
     });
 

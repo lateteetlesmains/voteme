@@ -255,6 +255,10 @@ audio {
     background-color: red;
 }
 
+.partial_answer{
+    background-color: orange;
+}
+
 /* Bouton top */
 #top_button{
     left: 90%;
