@@ -161,7 +161,7 @@ class PadConsumer(AsyncWebsocketConsumer):
 
             # print(incoming.color.color())
 
-        if self.ingame and incoming.message in ['good', 'faster']:
+        if self.ingame and incoming.message in ['good', 'faster', 'partial']:
             for pad in pads:
                 if pad.id == incoming.playerid:
                     pad.score = incoming.score

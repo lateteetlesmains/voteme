@@ -277,6 +277,7 @@ webSocket.onmessage = function (e) {
                             log(goodanswers);
                             player.score += goodanswers.length;
                             player.update();
+                            msg.score = player.score;
                             
                             if (goodanswers.length == expectedAnswers.length) {
                                 msg.message = "good";
