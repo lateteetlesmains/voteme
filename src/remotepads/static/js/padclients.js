@@ -11,7 +11,7 @@ var soundPaths = [
     { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
 ]
 
-let msg = { "id": "admin", "game_mode": '', "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
+let msg = { "id": "admin", "game_mode": '', "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
 const webSocket = new WebSocket(
     'ws://'
@@ -216,7 +216,8 @@ webSocket.onmessage = function (e) {
 
             //msg web socket
 
-            msg.player_id = incomingPlayer.id
+            msg.player_id = incomingPlayer.id;
+            msg.player_number = incomingPlayer.number;
             msg.id = 'admin';
             msg.message = 'OK';
 
@@ -306,13 +307,14 @@ webSocket.onmessage = function (e) {
                         $(`#box_buzzer_${quick_players[0].number}`).addClass('good_answer');
 
                     quick_players[0].update();
-                    if (player.id == quick_players[0].id)
+                    if (player.id == quick_players[0].id && ! player.has_answered)
                         $(`#${quick_players[0].number}_audio`)[0].play();
 
                     msg.player_id = quick_players[0].id;
                     msg.score = quick_players[0].score
                     msg.message = 'faster';
                     msg.id = 'admin';
+                    player.has_answered = true;
                     webSocket.send(JSON.stringify(msg));
 
                 }
@@ -442,7 +444,8 @@ $(() => {
             $(e.target).val("Démarrer");
             $('#players_container').text('');
             $('.ingame').addClass("hidden");
-            msg.message = "reset"
+            msg.message = "reset";
+            msg.score = 0;
             msg.player_id = '';
             waiting_players = false;
             gameStarted = false;

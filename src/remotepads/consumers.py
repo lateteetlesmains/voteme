@@ -173,6 +173,7 @@ class PadConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'pad_message',
                 'game_mode': text_data_json['game_mode'],
+                'player_number': text_data_json['player_number'],
                 'message': text_data_json['message'],
                 'id': text_data_json['id'],
                 'player_id': text_data_json['player_id'],
@@ -191,6 +192,7 @@ class PadConsumer(AsyncWebsocketConsumer):
                 {
                     'message': event['message'],
                     'game_mode': event['game_mode'],
+                    'player_number': event['player_number'],
                     'id': event['id'],
                     'player_id': event['player_id'],
                     'score': event['score'],
