@@ -1,1 +1,8 @@
-- Afficher le mode et la réponse attendue
+- ToDo
+    + Afficher le mode et la réponse attendue
+
+- NB
+    + Pour modifier le contenu du message envoyé par le web socket il faut le faire:
+        * Dans la variable msg du fichier padclient.js
+        * Dans la fonction pad_message et "await self.channel_layer.group_send" de consumers.py
+        * Dans setMessage du wemos
