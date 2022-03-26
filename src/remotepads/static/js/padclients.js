@@ -11,7 +11,7 @@ var soundPaths = [
     { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
 ]
 
-let msg = { "id": "admin", "game_mode": '', "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
+let msg = { "id": "admin", "game_mode": '', "expected_answers":[], "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
 const webSocket = new WebSocket(
     'ws://'
@@ -369,6 +369,8 @@ $(() => {
             expectedAnswers.push(e.target.id)
         else
             expectedAnswers.splice(expectedAnswers.indexOf(e.target.id), 1)
+        msg.expected_answers = expectedAnswers;
+        webSocket.send(JSON.stringify(msg));
 
     })
 
