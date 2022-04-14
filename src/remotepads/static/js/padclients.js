@@ -1,5 +1,3 @@
-// const roomName = JSON.parse($("#room-name").text())
-// const roomName = JSON.parse(document.getElementById('room-name').textContent);
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
@@ -49,17 +47,6 @@ class GameModes {
         this.mode = mode;
     }
 }
-
-// class ExpectedAnswers {
-//     static A = new ExpectedAnswer("a");
-//     static B = new ExpectedAnswer("b");
-//     static C = new ExpectedAnswer("c");
-//     static D = new ExpectedAnswer("d");
-
-//     constructor(answer) {
-//         this.answer = answer;
-//     }
-// }
 
 var expectedAnswers = [];
 var currentGameMode = GameModes.QCM;
@@ -374,9 +361,6 @@ $(() => {
 
     })
 
-
-
-
     $('#start_btn').on('click', function (e) {
 
         if ($(e.target).val() == "Démarrer") {
@@ -436,7 +420,6 @@ $(() => {
             gameStarted = true;
 
             $('.ingame').removeClass("hidden");
-
         }
         else {
             //reset
@@ -453,8 +436,6 @@ $(() => {
             gameStarted = false;
             players = [];
             quick_players = [];
-
-
         }
 
         webSocket.send(JSON.stringify(msg));
@@ -479,7 +460,4 @@ $(() => {
 
         webSocket.send(JSON.stringify(msg));
     });
-
-
-
 })
