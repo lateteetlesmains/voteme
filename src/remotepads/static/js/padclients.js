@@ -308,10 +308,6 @@ webSocket.onmessage = function (e) {
                 player.has_answered = true;
             }
 
-
-
-
-
         }
 
     }
@@ -344,6 +340,7 @@ $(() => {
     $('#question_type_form').on('change', function (e) {
         currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
         msg.game_mode = currentGameMode == GameModes.QCM ? "QCM" : "quick";
+        msg.message = "OK";
         if (currentGameMode == GameModes.Quick)
             $('#answer_form').addClass('hide');
         else
@@ -357,6 +354,7 @@ $(() => {
         else
             expectedAnswers.splice(expectedAnswers.indexOf(e.target.id), 1)
         msg.expected_answers = expectedAnswers;
+        msg.message = "OK";
         webSocket.send(JSON.stringify(msg));
 
     })
