@@ -9,7 +9,7 @@ waiting = False
 
 pads = []
 
-d = Display(board.D18, 35)
+d = Display(board.D21, 35)
 
 # /!\ Maintenir l'ordre des couleurs car lié aux idx du tableau client /!\
 colors = [
