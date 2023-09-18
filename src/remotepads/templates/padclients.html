@@ -1,133 +1,120 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/fontawsome/all.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/padclients.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/padclients_mobile.css' %}" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="stylesheet" href="./Pads Clients_files/bootstrap.min.css">
+  <link rel="stylesheet" href="./Pads Clients_files/all.css">
+  <link rel="stylesheet" href="./Pads Clients_files/padclients.css">
+  <link rel="stylesheet" href="./Pads Clients_files/padclients_mobile.css">
 
-    <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
-    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/padclients.js' %}"></script>
-    <title>Pads Clients</title>
-  </head>
+  <script src="./Pads Clients_files/jquery-3.6.0.js.téléchargement"></script>
+  <script src="./Pads Clients_files/bootstrap.bundle.min.js.téléchargement"></script>
+  <script src="./Pads Clients_files/padclients.js.téléchargement"></script>
+  <title>Pads Clients</title>
+</head>
 
-  <body >
-    <header class="nav justify-content-center position-sticky">
-      <div>
-        <h2>Buzzi WIFI Multigame</h2>
-      </div>
-    </header>
-    <div class="modal fade" tabindex="-1" id="question_modal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Définition de la question</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form class="form" id="question_type_form">
-              <div class="form-group">
-                <div>
-                  <label class="smaller-text">Type de question : </label>
-                </div>
-                
-                <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
-                  <label class="medium-text btn btn-info active">
-                    <input
-                      type="radio"
-                      name="options"
-                      id="qcm"
-                      autocomplete="off"
-                      checked
-                    />
-                    QCM
-                  </label>
-                  <label class="medium-text btn btn-info">
-                    <input
-                      type="radio"
-                      name="options"
-                      id="quick"
-                      autocomplete="off"
-                    />
-                    Rapidité
-                  </label>
-                </div>
-              </div>
-          </form>
-
-          <form class="form" id="answer_form">
+<body class="">
+  <header class="nav justify-content-center position-sticky">
+    <div>
+      <img src="logo.svg" alt="Logo">
+      <h2>INCENDIS MULTIGAME</h2>
+    </div>
+  </header>
+  <div class="modal fade" tabindex="-1" id="question_modal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Définition de la question</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form" id="question_type_form">
             <div class="form-group">
               <div>
-                  <label class="smaller-text">Réponse attendue : </label>
+                <label class="smaller-text">Type de question : </label>
               </div>
               
               <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
-                <label class="medium-text btn btn-info lbl_answer">
-                  <input class="answer" type="checkbox" name="options" id="a" autocomplete="off" />
-                  A
+                <label class="medium-text btn btn-info active">
+                  <input type="radio" name="options" id="qcm" autocomplete="off" checked="">
+                  QCM
                 </label>
-                <label class="medium-text btn btn-info lbl_answer">
-                  <input class="answer" type="checkbox" name="options" id="b" autocomplete="off" />
-                  B
-                </label>
-                <label class="medium-text btn btn-info lbl_answer">
-                  <input class="answer" type="checkbox" name="options" id="c" autocomplete="off" />
-                  C
-                </label>
-                <label class="medium-text btn btn-info lbl_answer">
-                  <input class="answer" type="checkbox" name="options" id="d" autocomplete="off" />
-                  D
+                <label class="medium-text btn btn-info">
+                  <input type="radio" name="options" id="quick" autocomplete="off">
+                  Rapidité
                 </label>
               </div>
             </div>
         </form>
-      
-      
+
+        <form class="form" id="answer_form">
+          <div class="form-group">
+            <div>
+                <label class="smaller-text">Réponse attendue : </label>
+            </div>
+            
+            <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
+              <label class="medium-text btn btn-info lbl_answer">
+                <input class="answer" type="checkbox" name="options" id="a" autocomplete="off">
+                A
+              </label>
+              <label class="medium-text btn btn-info lbl_answer">
+                <input class="answer" type="checkbox" name="options" id="b" autocomplete="off">
+                B
+              </label>
+              <label class="medium-text btn btn-info lbl_answer">
+                <input class="answer" type="checkbox" name="options" id="c" autocomplete="off">
+                C
+              </label>
+              <label class="medium-text btn btn-info lbl_answer">
+                <input class="answer" type="checkbox" name="options" id="d" autocomplete="off">
+                D
+              </label>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-          </div>
+      </form>
+    
+    
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
         </div>
       </div>
     </div>
-    <main >
-        <span id="top"></span>
-        <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
+  </div>
+  <main>
+      <span id="top"></span>
+      <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
 
-        <div id="btn_start_container" class="center_text container-fluid">
-            <input type="button" id="start_btn" class="btn btn-primary btn-lg start_reset" value="Démarrer"></input>
-            <input type="button" id="new_question_btn" class="btn btn-primary btn-lg hidden ingame start_reset" value="Nouvelle question"></input>
-        </div>
-        <div class="hidden center_text container" id="waiting_players">
-          <div class="loader"></div>
-          <div id="loader_text">Attente des joueurs ...</div>
-        </div>
-
-
-        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
-          Launch demo modal
-        </button> -->
-
-
-      <div id="players_container" class="hidden container">
-
+      <div id="btn_start_container" class="center_text container-fluid">
+          <input type="button" id="start_btn" class="btn btn-primary btn-lg start_reset" value="Lancer la partie">
+          <input type="button" id="new_question_btn" class="btn btn-primary btn-lg hidden ingame start_reset" value="Nouvelle question">
       </div>
-      <button id="top_button" class="btn btn-primary fixed-bottom hidden">
-        <i class="fa-solid fa-arrow-up"></i>
-      </button>
-      
-    </main>
-    <footer>
+      <div class="center_text container" id="waiting_players">
+        <div class="loader"></div>
+        <div id="loader_text">Attente des joueurs ...</div>
+      </div>
 
-    </footer>
-  </body>
-</html>
+
+      <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
+        Launch demo modal
+      </button> -->
+
+
+    <div id="players_container" class="hidden container">
+
+    </div>
+    <button id="top_button" class="btn btn-primary fixed-bottom hidden">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+    
+  </main>
+  <footer>
+
+  </footer>
+
+
