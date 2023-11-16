@@ -1,18 +1,21 @@
-<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <link rel="stylesheet" href="./Pads Clients_files/bootstrap.min.css">
-  <link rel="stylesheet" href="./Pads Clients_files/all.css">
-  <link rel="stylesheet" href="./Pads Clients_files/padclients.css">
-  <link rel="stylesheet" href="./Pads Clients_files/padclients_mobile.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/fontawsome/all.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/padclients.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/padclients_mobile.css' %}" />
 
-  <script src="./Pads Clients_files/jquery-3.6.0.js.téléchargement"></script>
-  <script src="./Pads Clients_files/bootstrap.bundle.min.js.téléchargement"></script>
-  <script src="./Pads Clients_files/padclients.js.téléchargement"></script>
-  <title>Pads Clients</title>
-</head>
+    <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/padclients.js' %}"></script>
+    <title>Pads Clients</title>
+  </head>
 
 <body class="">
   <header class="nav justify-content-center position-sticky">
