@@ -1,13 +1,37 @@
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
+
 var soundPaths = [
-    { soundName: "Phone", path: "/static/audio/phonecall.wav" },
-    { soundName: "Up", path: "/static/audio/smb_1-up.wav" },
-    { soundName: "Coin", path: "/static/audio/smb_coin.wav" },
-    { soundName: "Jump", path: "/static/audio/smb_jump-super.wav" },
-    { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
-]
+    { soundName: "1-Up",        path: "/static/audio/UP.wav" },
+    { soundName: "Bronzés",     path: "/static/audio/bronzés.mp3" },
+    { soundName: "Homer",       path: "/static/audio/homer.mp3" },
+    { soundName: "Cheval",      path: "/static/audio/cheval.mp3" },
+    { soundName: "Klaxon",      path: "/static/audio/klaxon.mp3" },
+    { soundName: "Glaude",      path: "/static/audio/glaude.mp3" },
+    { soundName: "Saut",        path: "/static/audio/saut.wav" },
+    { soundName: "Boulette",    path: "/static/audio/boulette.mp3" },
+    { soundName: "Vache",       path: "/static/audio/vache.mp3" },
+    // Ajoutez d'autres sons ici si nécessaire
+];
+
+// Assurez-vous que la fonction est appelée au chargement de la page
+document.addEventListener("DOMContentLoaded", function () {
+  toggleAnswerChoices();
+});
+
+function toggleAnswerChoices() {
+  var questionType = document.getElementById("questionType").value;
+  var answerChoices = document.getElementById("answerChoices");
+
+  if (questionType === 'qcm') {
+    answerChoices.style.display = 'flex';
+    answerChoices.classList.add("flex-layout"); // Ajoute une classe lors de la sélection de QCM
+  } else {
+    answerChoices.style.display = 'none';
+    answerChoices.classList.remove("flex-layout"); // Retire la classe si "Rapidité" est sélectionné
+  }
+}
 
 let msg = { "id": "admin", "game_mode": '', "expected_answers":[], "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
@@ -134,7 +158,7 @@ webSocket.onmessage = function (e) {
                         <div class="score_btn_container" >
 
                             <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_minus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_+' value='-1'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro' title="Remise à zéro">
+                            <div>             </div>
                             <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>            
                         
                         </div>
@@ -359,6 +383,34 @@ $(() => {
 
     })
 
+   $('#questionType').on('change', function () {
+    currentGameMode = this.value === 'qcm' ? GameModes.QCM : GameModes.Quick;
+    msg.game_mode = currentGameMode === GameModes.QCM ? 'QCM' : 'quick';
+    msg.message = 'OK';
+	console.log(currentGameMode);
+    if (currentGameMode === GameModes.Quick) {
+        $('#answerChoices').hide(); // Cache les choix de réponse pour le mode Rapidité
+    } else {
+        $('#answerChoices').show(); // Affiche les choix de réponse pour le mode QCM
+    }
+//    webSocket.send(JSON.stringify(msg));
+
+});
+
+$('input[name="answer"]').on('change', function () {
+    const answerId = this.id;
+    if ($(this).is(':checked')) {
+        expectedAnswers.push(answerId);
+    } else {
+        expectedAnswers.splice(expectedAnswers.indexOf(answerId), 1);
+    }
+    msg.expected_answers = expectedAnswers;
+    msg.message = 'OK';
+console.log(msg);
+    webSocket.send(JSON.stringify(msg));
+});
+
+
     $('#start_btn').on('click', function (e) {
 
         if ($(e.target).val() == "Démarrer") {
@@ -367,11 +419,16 @@ $(() => {
             $('#start_text').addClass("hidden");
             $('#waiting_players').removeClass('hidden');
             $('.form').removeClass('hidden');
-            msg.message = "start"
+	// Supprimez la classe "hidden" du div parent
+    		$('#questionType').parent().removeClass("hidden");
+
+    	// Retirez l'attribut "disabled" du sélecteur
+    		$('#questionType').removeAttr("disabled");
+
+            msg.message = "start";
             msg.player_id = '';
             msg.id = 'admin';
             msg.player_id = '';
-
             waiting_players = true;
             gameStarted = false;
             $('#question_modal').modal({ show: true, keyboard: false, backdrop: 'static' });
@@ -402,14 +459,6 @@ $(() => {
                     msg.message = "score update";
                     webSocket.send(JSON.stringify(msg));
                 });
-                $(`#btn_buzzer_${player.number}_reset`).on('click', function (_e) {
-                    player.score = 0;
-                    player.update();
-                    msg.player_id = player.id;
-                    msg.score = player.score;
-                    msg.message = "score update";
-                    webSocket.send(JSON.stringify(msg));
-                });
             });
             $(e.target).val("Réinitialiser");
             msg.message = "game"
@@ -418,6 +467,7 @@ $(() => {
             gameStarted = true;
 
             $('.ingame').removeClass("hidden");
+
         }
         else {
             //reset
@@ -434,6 +484,14 @@ $(() => {
             gameStarted = false;
             players = [];
             quick_players = [];
+
+// Ajoutez la classe "hidden" au div parent
+//$('#questionType').parent().addClass("hidden");
+
+// Ajoutez l'attribut "disabled" au sélecteur
+//$('#questionType').attr("disabled", "disabled");
+
+
         }
 
         webSocket.send(JSON.stringify(msg));
@@ -458,4 +516,7 @@ $(() => {
 
         webSocket.send(JSON.stringify(msg));
     });
+
+
+
 })

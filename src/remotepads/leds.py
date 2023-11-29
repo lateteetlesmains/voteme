@@ -126,7 +126,7 @@ if __name__ == '__main__':
     print("Extinction des leds")
     if os.getuid() != 0:
         exit("Les privilèges root sont necessaires !")
-    Display(board.D21, 35).clear()
+    Display(board.D18, 35).clear()
 
 
 # pixels.fill((0,255,0))
