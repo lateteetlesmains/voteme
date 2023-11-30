@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -5,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/x-icon" href="{% static 'logo.ico' %}">
     
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/fontawsome/all.css' %}" />
@@ -17,113 +19,59 @@
     <title>Pads Clients</title>
   </head>
 
-<body class="">
-  <header class="nav justify-content-center position-sticky">
-    <div>
-      <img src="./static/logo.svg" alt="Logo">
-      <h2>INCENDIS MULTIGAME</h2>
-    </div>
-  </header>
-  <div class="modal fade" tabindex="-1" id="question_modal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Définition de la question</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form class="form" id="question_type_form">
-            <div class="form-group">
-              <div>
-                <label class="smaller-text">Type de question : </label>
-              </div>
-              
-              <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
-                <label class="medium-text btn btn-info active">
-                  <input type="radio" name="options" id="qcm" autocomplete="off" checked="">
-                  QCM
-                </label>
-                </div>
-                <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
-                <label class="medium-text btn btn-info active">
-                  <input type="radio" name="options" id="qcm" autocomplete="off" checked="">
-                  QCM
-                </label>
-                <label class="medium-text btn btn-info">
-                  <input type="radio" name="options" id="quick" autocomplete="off">
-                  Rapidité
-                </label>
-              </div>
-            </div>
-        </form>
+  <body >
+    <header class="nav justify-content-center position-sticky">
+      <div>
+<img src="{% static 'logo.svg' %}" alt="Logo">
 
-        <form class="form" id="answer_form">
-          <div class="form-group">
-            <div>
-                <label class="smaller-text">Réponse attendue : </label>
-            </div>
-            
-            <div class="btn-group-lg btn-group-toggle question_btn_group" data-toggle="buttons">
-              <label class="medium-text btn btn-info lbl_answer">
-                <input class="answer" type="checkbox" name="options" id="a" autocomplete="off">
-                A
-              </label>
-              <label class="medium-text btn btn-info lbl_answer">
-                <input class="answer" type="checkbox" name="options" id="b" autocomplete="off">
-                B
-              </label>
-              <label class="medium-text btn btn-info lbl_answer">
-                <input class="answer" type="checkbox" name="options" id="c" autocomplete="off">
-                C
-              </label>
-              <label class="medium-text btn btn-info lbl_answer">
-                <input class="answer" type="checkbox" name="options" id="d" autocomplete="off">
-                D
-              </label>
-            </div>
-          </div>
-      </form>
-    
-    
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-        </div>
+        <h2>INCENDIS MULTIGAME</h2>
       </div>
-    </div>
-  </div>
-  <main>
-      <span id="top"></span>
-      <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
+    </header>
 
-      <div id="btn_start_container" class="center_text container-fluid">
-          <input type="button" id="start_btn" class="btn btn-primary btn-lg start_reset" value="Lancer la partie">
-          <input type="button" id="new_question_btn" class="btn btn-primary btn-lg hidden ingame start_reset" value="Nouvelle question">
+<div class="form-group text-center hidden">
+  <select id="questionType" disabled onchange="toggleAnswerChoices()">
+    <option value="quick" selected>Rapidité</option>
+    <option value="qcm">QCM</option>
+  </select>
+</div>
+
+<!-- Réponses ABCD, initialement cachées -->
+<!-- Réponses ABCD -->
+<div class="form-group" id="answerChoices" style="display: flex; justify-content: center;">
+  <label><input type="checkbox" id="a" name="answer" value="A"> A</label>
+  <label><input type="checkbox" id="b" name="answer" value="B"> B</label>
+  <label><input type="checkbox" id="c" name="answer" value="C"> C</label>
+  <label><input type="checkbox" id="d" name="answer" value="D"> D</label>
+</div>
+    <main >
+        <span id="top"></span>
+        <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
+
+        <div id="btn_start_container" class="center_text container-fluid">
+            <input type="button" id="start_btn" class="btn btn-primary btn-lg start_reset" value="Démarrer"></input>
+            <input type="button" id="new_question_btn" class="btn btn-primary btn-lg hidden ingame start_reset" value="Nouvelle question"></input>
+        </div>
+        <div class="hidden center_text container" id="waiting_players">
+          <div class="loader"></div>
+          <div id="loader_text">Attente des joueurs ...</div>
+        </div>
+
+
+        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
+          Launch demo modal
+        </button> -->
+
+
+      <div id="players_container" class="hidden container">
+
       </div>
-      <div class="center_text container" id="waiting_players">
-        <div class="loader"></div>
-        <div id="loader_text">Attente des joueurs ...</div>
-      </div>
+      <button id="top_button" class="btn btn-primary fixed-bottom hidden">
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+      
+    </main>
+    <footer>
 
-
-      <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
-        Launch demo modal
-      </button> -->
-
-
-    <div id="players_container" class="hidden container">
-
-    </div>
-    <button id="top_button" class="btn btn-primary fixed-bottom hidden">
-      <i class="fa-solid fa-arrow-up"></i>
-    </button>
-    
-  </main>
-  <footer>
-
-  </footer>
-
-
+    </footer>
+  </body>
+</html>

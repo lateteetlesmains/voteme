@@ -45,7 +45,7 @@ class Colors:
     Blue = Color("Blue", 0, 0, 255)
     Purple = Color("Purple", 255, 0, 255)
     Orange = Color("Orange", 255, 127, 0)
-    yellow = Color("yellow", 255, 255, 0)
+    Yellow = Color("Yellow", 255, 255, 0)
     RedRuby = Color("RedRuby", 163, 0, 21)
     BlueLavender = Color("BlueLavender", 177, 145, 255)
     Turquoise = Color("Turquoise", 65, 234, 212)
@@ -61,7 +61,7 @@ class Display:
 
         self.texts = {
             '.': [6],
-            'p': [0, 1, 4, 5, 6],
+            'p': [1, 2, 3],
             'o': [0, 1, 2, 3, 4, 5],
             'u': [1, 2, 3, 4, 5],
             't': [3, 4, 5, 6],
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     print("Extinction des leds")
     if os.getuid() != 0:
         exit("Les privilèges root sont necessaires !")
-    Display(board.D21, 35).clear()
+    Display(board.D18, 35).clear()
 
 
 # pixels.fill((0,255,0))

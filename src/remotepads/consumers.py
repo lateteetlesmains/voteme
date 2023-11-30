@@ -9,15 +9,15 @@ waiting = False
 
 pads = []
 
-d = Display(board.D21, 35)
+d = Display(board.D18, 35)
 
 # /!\ Maintenir l'ordre des couleurs car lié aux idx du tableau client /!\
 colors = [
-    Colors.RedRuby,
-    Colors.BlueLavender,
+    Colors.Yellow,
+    Colors.Blue,
     Colors.Turquoise,
     Colors.Purple,
-    Colors.PurpleDark
+    Colors.RedRuby
 ]
 
 
@@ -46,7 +46,7 @@ class ScreensThread(Thread):
             elif waiting:
                 if(self.lastNbPlayers != len(pads)):
                     d.clear()
-                    d.draw(1, 'J', Colors.Blue.color())
+                    d.draw(1, 'p',colors[len(pads) - 1].color())
                     d.draw(5, len(pads), colors[len(pads) - 1].color())
                     self.lastNbPlayers = len(pads)
             elif (len(pads) > 0):

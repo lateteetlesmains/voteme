@@ -1,13 +1,51 @@
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
+
 var soundPaths = [
-    { soundName: "Phone", path: "/static/audio/phonecall.wav" },
-    { soundName: "Up", path: "/static/audio/smb_1-up.wav" },
-    { soundName: "Coin", path: "/static/audio/smb_coin.wav" },
-    { soundName: "Jump", path: "/static/audio/smb_jump-super.wav" },
-    { soundName: "powerUp", path: "/static/audio/smb_powerup_appears.wav" }
-]
+    { soundName: "1-Up",        path: "/static/audio/UP.wav" },
+    { soundName: "Bronzés",     path: "/static/audio/bronzés.mp3" },
+    { soundName: "Homer",       path: "/static/audio/homer.mp3" },
+    { soundName: "Cheval",      path: "/static/audio/cheval.mp3" },
+    { soundName: "Klaxon",      path: "/static/audio/klaxon.mp3" },
+    { soundName: "Glaude",      path: "/static/audio/glaude.mp3" },
+    { soundName: "Saut",        path: "/static/audio/saut.wav" },
+    { soundName: "Boulette",    path: "/static/audio/boulette.mp3" },
+    { soundName: "Vache",       path: "/static/audio/vache.mp3" },
+    // Ajoutez d'autres sons ici si nécessaire
+];
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialiser l'affichage en fonction de l'option sélectionnée
+  toggleAnswerChoices();
+
+  // Écouteur d'événements pour les changements sur le menu déroulant
+  document.getElementById("questionType").addEventListener("change", toggleAnswerChoices);
+});
+
+function toggleAnswerChoices() {
+  var questionType = document.getElementById("questionType").value;
+  var answerChoices = document.getElementById("answerChoices");
+
+  if (questionType === 'qcm') {
+    answerChoices.style.display = 'flex';
+    answerChoices.classList.add("flex-layout"); // Ajoute une classe lors de la sélection de QCM
+  } else {
+    answerChoices.style.display = 'none';
+    answerChoices.classList.remove("flex-layout"); // Retire la classe si "Rapidité" est sélectionné
+  }
+}
+
+// Appeler updateGameMode au chargement de la page
+$(document).ready(function() {
+    updateGameMode();
+});
+
+function updateGameMode() {
+    	currentGameMode = $('#questionType').val() === 'qcm' ? GameModes.QCM : GameModes.Quick;
+	console.log("Mode de jeu actuel :", currentGameMode.mode); // Débogage
+}
 
 let msg = { "id": "admin", "game_mode": '', "expected_answers":[], "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
@@ -15,7 +53,6 @@ const webSocket = new WebSocket(
     'ws://'
     + window.location.host
     + '/ws/pads/'
-
 );
 
 class Player {
@@ -42,17 +79,17 @@ class GameModes {
     // Create new instances of the same class as static attributes
     static QCM = new GameModes("qcm")
     static Quick = new GameModes("quick")
-
     constructor(mode) {
         this.mode = mode;
     }
 }
 
 var expectedAnswers = [];
-var currentGameMode = GameModes.QCM;
+var currentGameMode = GameModes.Quizz;
 var players = [];
 var quick_players = [];
 var soundList = []
+
 
 function getSoundIndex(currentindex) {
     let hasSoundPlayerIdx = players.findIndex(player => player.sound.path == soundPaths[currentindex].path);
@@ -87,19 +124,20 @@ webSocket.onmessage = function (e) {
             }
 
             players.push(incomingPlayer);
+console.log(incomingPlayer);
             incomingPlayer.number = players.indexOf(incomingPlayer) + 1;
 
             incomingPlayer.sound = soundPaths[getSoundIndex(incomingPlayer.number - 1)];
 
             $('#players_container').append(`
-            
+
             <div class='box_buzzer' id='box_buzzer_${incomingPlayer.number}'>
-               
+
                     <div class="player_name_audio_container">
                         <div class='player_name'>
                             <div class="player_color" id=player_${incomingPlayer.number}_color></div>
                             <h2>Joueur ${incomingPlayer.number}</h2>
-                            
+
                         </div>
                         <div class='audio_container'>
                             <audio id=${incomingPlayer.number}_audio src=" ${incomingPlayer.sound.path}" type="audio/mpeg">
@@ -107,7 +145,7 @@ webSocket.onmessage = function (e) {
                             </audio>
                         </div>
                         <div class="drop_sound_and_button_container">
-                        
+
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle sound_list_drop" type="button" id="dropdownMenuButtonSound_${incomingPlayer.number}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     ${incomingPlayer.sound.soundName}
@@ -120,11 +158,11 @@ webSocket.onmessage = function (e) {
                             </div>
                             <div>
                                 <button title="Jouer le son" class="btn btn-primary btn_play" id="${incomingPlayer.number}_play"><i class="fa-solid fa-play"></i></button>
-                            </div>
-                        
+                           </div>
+
                         </div>
- 
-                     
+
+
                     </div>
                     <div class='score_container'>
                         <div>
@@ -134,14 +172,13 @@ webSocket.onmessage = function (e) {
                         <div class="score_btn_container" >
 
                             <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_minus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_+' value='-1'>
-                            <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_reset' type='submit' name='btn-Buzzer_reset' value='Remise à zéro' title="Remise à zéro">
                             <input class='btn btn-primary' id='btn_buzzer_${incomingPlayer.number}_plus' type='submit' name='btn-Buzzer_${incomingPlayer.number}_-' value='+1'>            
-                        
+
                         </div>
-                      
-               
+
+
                     </div>
-                
+
             </div>
 
             `);
@@ -149,9 +186,9 @@ webSocket.onmessage = function (e) {
             //Audio
             soundPaths.forEach(sound => {
                 $(`#sound_drop_${incomingPlayer.number}`).append(`
-                   
+
                     <button id=${incomingPlayer.number}_${sound.soundName} class="dropdown-item" data-path=${sound.path} >${sound.soundName}</button>
-                   
+
                 `);
 
                 $(`#${incomingPlayer.number}_${sound.soundName}`).on('click', function (_e) {
@@ -218,6 +255,8 @@ webSocket.onmessage = function (e) {
                 "width": "80px",
                 "height": "20px",
             });
+console.log("voici le contenu de msg");
+console.log(msg);
             webSocket.send(JSON.stringify(msg));
 
         }
@@ -231,12 +270,19 @@ webSocket.onmessage = function (e) {
             if (!player.answer.includes(data.message)) {
                 //On evite de pouvoir changer sa réponse 
                 if (currentGameMode == GameModes.QCM) {
-                    // log(data.message)
+                     log(data.message)
                     player.answer.push(data.message);
-                    // log(player.answer)
+console.log("answer");
+
+log(player.answer);
                     msg.id = 'admin';
                     msg.player_id = player.id;
                     if (expectedAnswers.length == 1 && !player.has_answered) {
+
+console.log("reponse du buzzer");
+console.log(player.answer[0] );
+console.log("expectedAnswers");
+console.log(expectedAnswers[0]);
 
                         if (player.answer[0] == expectedAnswers[0]) {
                             $(`#box_buzzer_${player.number}`).addClass('good_answer');
@@ -244,6 +290,7 @@ webSocket.onmessage = function (e) {
                             player.update();
                             msg.message = "good";
                             msg.score = player.score;
+console.log(msg);
 
 
                         }
@@ -251,6 +298,8 @@ webSocket.onmessage = function (e) {
                         else {
                             $(`#box_buzzer_${player.number}`).addClass('bad_answer');
                             msg.message = "bad";
+console.log(msg);
+
                         }
                         player.has_answered = true;
 
@@ -266,17 +315,21 @@ webSocket.onmessage = function (e) {
                             player.score += goodanswers.length;
                             player.update();
                             msg.score = player.score;
-                            
+
                             if (goodanswers.length == expectedAnswers.length) {
                                 msg.message = "good";
+console.log(msg);
 
                                 $(`#box_buzzer_${player.number}`).addClass('good_answer');
                             }
                             else if (goodanswers.length > 0 && goodanswers.length < expectedAnswers.length) {
                                 msg.message = "partial";
+console.log(msg);
+
                                 $(`#box_buzzer_${player.number}`).addClass('partial_answer');
                             }
                             else if (goodanswers.length == 0) {
+console.log(msg);
                                 msg.message = "bad";
                                 $(`#box_buzzer_${player.number}`).addClass('bad_answer');
                             }
@@ -337,28 +390,34 @@ $(() => {
             $('#top_button').addClass('hidden');
         }
     });
-    $('#question_type_form').on('change', function (e) {
-        currentGameMode = e.target.id == "qcm" ? GameModes.QCM : GameModes.Quick;
-        msg.game_mode = currentGameMode == GameModes.QCM ? "QCM" : "quick";
-        msg.message = "OK";
-        if (currentGameMode == GameModes.Quick)
-            $('#answer_form').addClass('hide');
-        else
-            $('#answer_form').removeClass('hide');
-    });
-    $('#answer_form').on('change', function (e) {
-        // expected_answer = new ExpectedAnswer(e.target.id);
 
-        if (!$(e.target).parent().hasClass('active'))
-            expectedAnswers.push(e.target.id)
-        else
-            expectedAnswers.splice(expectedAnswers.indexOf(e.target.id), 1)
-        msg.expected_answers = expectedAnswers;
-        msg.message = "OK";
-        webSocket.send(JSON.stringify(msg));
+$('#questionType').on('change', function () {
+    currentGameMode = this.value === 'qcm' ? GameModes.QCM : GameModes.Quick;
+    msg.game_mode = currentGameMode === GameModes.QCM ? 'QCM' : 'quick';
+    msg.message = 'OK';
+	console.log(currentGameMode);
+    if (currentGameMode === GameModes.Quick) {
+        $('#answerChoices').hide(); // Cache les choix de réponse pour le mode Rapidité
+    } else {
+        $('#answerChoices').show(); // Affiche les choix de réponse pour le mode QCM
+    }
+//    webSocket.send(JSON.stringify(msg));
 
-    })
+});
+$('input[name="answer"]').on('change', function () {
+    const answerId = this.id;
+    if ($(this).is(':checked')) {
+        expectedAnswers.push(answerId);
+    } else {
+        expectedAnswers.splice(expectedAnswers.indexOf(answerId), 1);
+    }
+console.log("expectedAnswers");
+console.log(expectedAnswers);
 
+    msg.expected_answers = expectedAnswers;
+    msg.message = 'OK';
+    webSocket.send(JSON.stringify(msg));
+});
     $('#start_btn').on('click', function (e) {
 
         if ($(e.target).val() == "Démarrer") {
@@ -375,12 +434,21 @@ $(() => {
             waiting_players = true;
             gameStarted = false;
             $('#question_modal').modal({ show: true, keyboard: false, backdrop: 'static' });
-        }
+
+		// Supprimez la classe "hidden" du div parent
+    		$('#questionType').parent().removeClass("hidden");
+
+    		// Retirez l'attribut "disabled" du sélecteur
+    		$('#questionType').removeAttr("disabled");        
+
+}
 
         else if ($(e.target).val() == 'Lancer la partie') {
             //lancement de partie
             msg.game_mode = currentGameMode == GameModes.QCM ? "QCM" : "quick";
-            if (players.length < 1)
+if (players.length > 1) {$(e.target).hide();}
+
+if (players.length < 1)
                 return;
             players.forEach(player => {
                 $(`#btn_buzzer_${player.number}_plus`).on('click', function (_e) {
