@@ -1,6 +1,54 @@
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
+<<<<<<< HEAD
+=======
+
+var soundPaths = [
+    { soundName: "1-Up",        path: "/static/audio/UP.wav" },
+    { soundName: "Bronzés",     path: "/static/audio/bronzés.mp3" },
+    { soundName: "Homer",       path: "/static/audio/homer.mp3" },
+    { soundName: "Cheval",      path: "/static/audio/cheval.mp3" },
+    { soundName: "Klaxon",      path: "/static/audio/klaxon.mp3" },
+    { soundName: "Glaude",      path: "/static/audio/glaude.mp3" },
+    { soundName: "Saut",        path: "/static/audio/saut.wav" },
+    { soundName: "Boulette",    path: "/static/audio/boulette.mp3" },
+    { soundName: "Vache",       path: "/static/audio/vache.mp3" },
+    // Ajoutez d'autres sons ici si nécessaire
+];
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialiser l'affichage en fonction de l'option sélectionnée
+  toggleAnswerChoices();
+
+  // Écouteur d'événements pour les changements sur le menu déroulant
+  document.getElementById("questionType").addEventListener("change", toggleAnswerChoices);
+});
+
+function toggleAnswerChoices() {
+  var questionType = document.getElementById("questionType").value;
+  var answerChoices = document.getElementById("answerChoices");
+
+  if (questionType === 'qcm') {
+    answerChoices.style.display = 'flex';
+    answerChoices.classList.add("flex-layout"); // Ajoute une classe lors de la sélection de QCM
+  } else {
+    answerChoices.style.display = 'none';
+    answerChoices.classList.remove("flex-layout"); // Retire la classe si "Rapidité" est sélectionné
+  }
+}
+
+// Appeler updateGameMode au chargement de la page
+$(document).ready(function() {
+    updateGameMode();
+});
+
+function updateGameMode() {
+    	currentGameMode = $('#questionType').val() === 'qcm' ? GameModes.QCM : GameModes.Quick;
+	console.log("Mode de jeu actuel :", currentGameMode.mode); // Débogage
+}
+>>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
 
 var soundPaths = [
     { soundName: "1-Up",        path: "/static/audio/UP.wav" },
@@ -279,6 +327,7 @@ console.log(incomingPlayer);
                 "width": "80px",
                 "height": "20px",
             });
+<<<<<<< HEAD
                 switch (msg.player_number)
                     {
                         case "1":
@@ -298,6 +347,8 @@ console.log("Buzz 5 couleur rouge ruby ");
                         break;
 			}
 
+=======
+>>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
 console.log("voici le contenu de msg");
 console.log(msg);
             webSocket.send(JSON.stringify(msg));
