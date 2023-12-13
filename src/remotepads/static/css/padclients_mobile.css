@@ -1,14 +1,61 @@
-@media (max-width: 625px) { 
-    .box_buzzer{
+:root {
+    /* Vos variables CSS */
+    /* ... */
+}
+
+/* Vos règles CSS globales */
+.form-group {
+    /* ... */
+}
+.hidden {
+    /* ... */
+}
+/* ... Plus de vos règles CSS globales... */
+
+/* Modifications et Ajouts pour les boutons et l'espacement */
+.btn-info {
+    /* ... */
+}
+.btn-info:hover {
+    /* ... */
+}
+.btn-primary {
+    /* ... */
+}
+.btn-primary:hover {
+    /* ... */
+}
+.mx-1 {
+    /* ... */
+}
+.my-3 {
+    /* ... */
+}
+
+/* Styles spécifiques pour les appareils mobiles */
+@media (max-width: 625px) {
+    /* Adaptation des éléments pour les écrans plus petits */
+    .box_buzzer {
         width: inherit;
     }
-    .player_name_audio_container{
+    .player_name_audio_container {
         flex-direction: column;
     }
     .drop_sound_and_button_container {
         justify-content: flex-end;
     }
-    .score_btn_container{
+    .score_btn_container {
         justify-content: center;
     }
- }
+
+    /* Autres adaptations pour mobile */
+    header {
+        /* Ajustements pour l'en-tête sur mobile */
+    }
+
+    .center_text, #btn_start_container, .modal-content, #players_container {
+        /* Ajustements pour les conteneurs sur mobile */
+    }
+
+    /* Ajoutez ici d'autres adaptations spécifiques pour mobile si nécessaire */
+}

@@ -1,8 +1,6 @@
 const log = console.log;
 var waiting_players = false;
 var gameStarted = false;
-<<<<<<< HEAD
-=======
 
 var soundPaths = [
     { soundName: "1-Up",        path: "/static/audio/UP.wav" },
@@ -48,77 +46,7 @@ function updateGameMode() {
     	currentGameMode = $('#questionType').val() === 'qcm' ? GameModes.QCM : GameModes.Quick;
 	console.log("Mode de jeu actuel :", currentGameMode.mode); // Débogage
 }
->>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
 
-var soundPaths = [
-    { soundName: "1-Up",        path: "/static/audio/UP.wav" },
-    { soundName: "Bronzés",     path: "/static/audio/bronzés.mp3" },
-    { soundName: "Homer",       path: "/static/audio/homer.mp3" },
-    { soundName: "Cheval",      path: "/static/audio/cheval.mp3" },
-    { soundName: "Klaxon",      path: "/static/audio/klaxon.mp3" },
-    { soundName: "Glaude",      path: "/static/audio/glaude.mp3" },
-    { soundName: "Saut",        path: "/static/audio/saut.wav" },
-    { soundName: "Boulette",    path: "/static/audio/boulette.mp3" },
-    { soundName: "Vache",       path: "/static/audio/vache.mp3" },
-    // Ajoutez d'autres sons ici si nécessaire
-];
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialiser l'affichage en fonction de l'option sélectionnée
-  toggleAnswerChoices();
-
-  // Écouteur d'événements pour les changements sur le menu déroulant
-  document.getElementById("questionType").addEventListener("change", toggleAnswerChoices);
-});
-
-function toggleAnswerChoices() {
-  var questionType = document.getElementById("questionType").value;
-  var answerChoices = document.getElementById("answerChoices");
-
-  if (questionType === 'qcm') {
-    answerChoices.style.display = 'flex';
-    answerChoices.classList.add("flex-layout"); // Ajoute une classe lors de la sélection de QCM
-  } else {
-    answerChoices.style.display = 'none';
-    answerChoices.classList.remove("flex-layout"); // Retire la classe si "Rapidité" est sélectionné
-  }
-}
-
-// Appeler updateGameMode au chargement de la page
-$(document).ready(function() {
-    updateGameMode();
-});
-
-function updateGameMode() {
-    	currentGameMode = $('#questionType').val() === 'qcm' ? GameModes.QCM : GameModes.Quick;
-	console.log("Mode de jeu actuel :", currentGameMode.mode); // Débogage
-}
-let timer;
-let secondsLeft;
-
-function setTimer(seconds) {
-    clearInterval(timer); // Arrête le minuteur précédent s'il y en a un
-    secondsLeft = seconds;
-    document.getElementById('timer').innerText = formatTime(secondsLeft);
-    timer = setInterval(countdown, 1000); // Démarre le nouveau minuteur
-}
-
-function countdown() {
-    secondsLeft--;
-    document.getElementById('timer').innerText = formatTime(secondsLeft);
-    if (secondsLeft <= 0) {
-        clearInterval(timer);
-        // Ajoutez ici toute action à effectuer à la fin du compte à rebours
-        alert('Le temps est écoulé !');
-    }
-}
-
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
-}
 let msg = { "id": "admin", "game_mode": '', "expected_answers":[], "player_number":"0", "player_id": '', "message": "", 'score': '0', 'color_r': 0, 'color_g': 0, 'color_b': 0 };
 
 const webSocket = new WebSocket(
@@ -322,12 +250,14 @@ console.log(incomingPlayer);
             msg.color_g = incomingPlayer.color_g;
             msg.color_b = incomingPlayer.color_b;
 
-            $(`#player_${incomingPlayer.number}_color`).css({
+            $(`#player_${incomingPlayer.number}_color`).css(
+            {
                 "background-color": `rgb(${incomingPlayer.color_r}, ${incomingPlayer.color_g},${incomingPlayer.color_b})`,
                 "width": "80px",
                 "height": "20px",
             });
-<<<<<<< HEAD
+
+          /*  switch(msg.player_number)
                 switch (msg.player_number)
                     {
                         case "1":
@@ -345,10 +275,9 @@ console.log("Buzz 4 couleur violet ");
                         case "5":
 console.log("Buzz 5 couleur rouge ruby ");
                         break;
-			}
-
-=======
->>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
+           
+           
+*/
 console.log("voici le contenu de msg");
 console.log(msg);
             webSocket.send(JSON.stringify(msg));

@@ -16,79 +16,14 @@
     <script src="{% static 'js/jquery/jquery-3.6.0.js' %}"></script>
     <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/padclients.js' %}"></script>
-    <title>Buzzer</title>
+    <title>Pads Clients</title>
   </head>
 
   <body >
     <header class="nav justify-content-center position-sticky">
       <div>
-<<<<<<< HEAD
         <img src="{% static 'logo.svg' %}" alt="Logo" class="logo">
 
-      </div>
-    </header>
-
-<div class="form-group text-center hidden">
-
-	<select id="questionType" disabled onchange="toggleAnswerChoices()">
-    	<option value="quick" selected>Rapidité</option>
-    	<option value="qcm">QCM</option>
-  	</select>
- </div>
-
-<div class="form-group text-center hidden" id="answerChoices" style="display: flex; justify-content: center;">
-
-
-<div>
-        	<div class="row justify-content-center">
-                <div class="col-auto">
-                <button  onclick="setTimer(10)" class="btn-primary btn-lg">10 Secondes</button>
-                </div>
-        		<p id="timer">00:00</p>
-                <div class="col-auto">
-                <button  onclick="setTimer(20)" class="btn-primary btn-lg">20 Secondes</button>
-                </div>
-		</div>
- <div class="row justify-content-center" style="margin-top: 20px;">
-
-        <label><input type="checkbox" id="a" name="answer" value="A"> A</label>
-        <label><input type="checkbox" id="b" name="answer" value="B"> B</label>
-        <label><input type="checkbox" id="c" name="answer" value="C"> C</label>
-        <label><input type="checkbox" id="d" name="answer" value="D"> D</label>
-</div>
-
-        	</div>
-</div>
-</div>
-
-
-
-    <main >
-        <span id="top"></span>
-        <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
-
-        <div id="btn_start_container" class="center_text container-fluid">
-            <input type="button" id="start_btn" class="btn btn-primary btn-lg start_reset" value="Démarrer"></input>
-            <input type="button" id="new_question_btn" class="btn btn-primary btn-lg hidden ingame start_reset" value="Nouvelle question"></input>
-        </div>
-        <div class="hidden center_text container" id="waiting_players">
-          <div class="loader"></div>
-          <div id="loader_text">Attente des joueurs ...</div>
-        </div>
-
-
-        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#question_modal">
-          Launch demo modal
-        </button> -->
-
-
-      <div id="players_container" class="hidden container">
-
-      </div>
-=======
-<img src="{% static 'logo.svg' %}" alt="Logo">
-
-        <h2>INCENDIS MULTIGAME</h2>
       </div>
     </header>
 
@@ -107,6 +42,7 @@
   <label><input type="checkbox" id="c" name="answer" value="C"> C</label>
   <label><input type="checkbox" id="d" name="answer" value="D"> D</label>
 </div>
+
     <main >
         <span id="top"></span>
         <div class="center_text">Cliquez ici pour attendre les joueurs.</div>
@@ -129,7 +65,6 @@
       <div id="players_container" class="hidden container">
 
       </div>
->>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
       <button id="top_button" class="btn btn-primary fixed-bottom hidden">
         <i class="fa-solid fa-arrow-up"></i>
       </button>
@@ -140,7 +75,3 @@
     </footer>
   </body>
 </html>
-<<<<<<< HEAD
-
-=======
->>>>>>> a89cfdb6c06f3459314cedd50bbbdddfb3e5a477
